@@ -1,0 +1,64 @@
+{
+  "name": "@owstack/wallet-client",
+  "description": "A Javascript cryptocurrency wallet library.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "bitcoin",
+    "btc",
+    "bitcoin cash",
+    "bch",
+    "litecoin",
+    "ltc",
+    "multisig",
+    "wallet",
+    "client"
+  ],
+  "engine": "node >= 8.0.0",
+  "main": "index.js",
+  "repository": {
+    "url": "git@github.com:owstack/wallet-client.git",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/owstack/wallet-client/issues"
+  },
+  "dependencies": {
+    "@owstack/ows-common": "^0.0.11",
+    "@owstack/credentials-lib": "^0.0.10",
+    "@owstack/mnemonic-lib": "^0.0.9",
+    "@owstack/payment-protocol-lib": "^0.0.3",
+    "@owstack/btc-lib": "^0.1.0",
+    "@owstack/bch-lib": "^0.3.0",
+    "@owstack/ltc-lib": "^0.1.0",
+    "async": "^0.9.0",
+    "json-stable-stringify": "^1.0.0",
+    "preconditions": "^1.0.8",
+    "sjcl": "1.0.3",
+    "superagent": "^3.4.1"
+  },
+  "devDependencies": {
+    "@owstack/btc-wallet-service": "^0.0.9",
+    "@owstack/bch-wallet-service": "^0.0.9",
+    "@owstack/ltc-wallet-service": "^0.0.6",
+    "browserify": "^13.1.0",
+    "chai": "^1.9.1",
+    "coveralls": "^2.11.2",
+    "grunt": "~0.4.0",
+    "grunt-jsdox": "^0.1.7",
+    "istanbul": "*",
+    "mocha": "^1.18.2",
+    "sinon": "^1.10.3",
+    "supertest": "^3.0.0",
+    "tingodb": "^0.3.4",
+    "uglify": "^0.1.1",
+    "uuid": "^2.0.1"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --reporter spec test",
+    "test": "./node_modules/.bin/mocha",
+    "coveralls": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "docs": "./node_modules/.bin/jsdox lib/* lib/common lib/errors -o docs && cat README.header.md  docs/*.md LICENSE > README.md"
+  }
+}
