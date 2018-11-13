@@ -83,12 +83,7 @@ helpers.generateUtxos = function(scriptType, publicKeyRing, path, requiredSignat
   var utxos = lodash.map(amounts, function(amount, i) {
 
     var client = new Client();
-
-//    var address = Utils.deriveAddress(scriptType, publicKeyRing, path, requiredSignatures, Constants.TESTNET);
-//    var address = Utils.deriveAddress(scriptType, publicKeyRing, path, requiredSignatures, 'BTCTEST');
-
     var address = client.deriveAddress(scriptType, publicKeyRing, path, requiredSignatures, 'BTCTEST');
-console.log('helpers.generateUtxos '+JSON.stringify(address));
     var scriptPubKey;
     switch (scriptType) {
       case Constants.SCRIPT_TYPES.P2SH:
@@ -123,11 +118,9 @@ helpers.createAndJoinWallet = function(clients, m, n, opts, cb) {
   opts = opts || {};
 
   clients[0].seedFromRandomWithMnemonic({
-//    network: opts.network || Constants.TESTNET
     network: opts.network || 'BTCTEST'
   });
   clients[0].createWallet('mywallet', 'creator', m, n, {
-//    network: opts.network || Constants.TESTNET,
     network: opts.network || 'BTCTEST',
     singleAddress: !!opts.singleAddress,
   }, function(err, secret) {
@@ -141,7 +134,6 @@ helpers.createAndJoinWallet = function(clients, m, n, opts, cb) {
       function(next) {
         async.each(lodash.range(1, n), function(i, cb) {
           clients[i].seedFromRandomWithMnemonic({
-//              network: Constants.TESTNET
             network: 'BTCTEST'
           });
           clients[i].joinWallet(secret, 'copayer ' + i, {}, cb);
@@ -371,7 +363,6 @@ describe('client API', function() {
         var client = helpers.newClient(app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-//            network: Constants.TESTNET
             network: 'BTCTEST'
           },
           function(err) {
@@ -400,7 +391,6 @@ describe('client API', function() {
         var client = helpers.newClient(app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-//            network: Constants.TESTNET
             network: 'BTCTEST'
           },
           function(err) {
@@ -429,7 +419,6 @@ describe('client API', function() {
         var client = helpers.newClient(app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-//            network: Constants.TESTNET
             network: 'BTCTEST'
           },
           function(err) {
@@ -453,7 +442,6 @@ describe('client API', function() {
     it('should handle critical errors (Case5)', function(done) {
       clients[0].request = helpers.stubRequest('some error');
       clients[0].createWallet('mywallet', 'creator', 1, 2, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.exist(err);
@@ -978,7 +966,6 @@ describe('client API', function() {
       var i = 0;
       while (i++ < 100) {
         var walletId = Uuid.v4();
-//        var network = i % 2 == 0 ? Constants.TESTNET : Constants.LIVENET;
         var network = i % 2 == 0 ? 'BTCTEST' : 'BTC';
         var walletPrivKey = new PrivateKey(null, network);
         var client = new Client();
@@ -1000,12 +987,8 @@ describe('client API', function() {
       var client = new Client();
       var walletId = Uuid.v4();
       var network = 'BTCTEST';
-//      var walletPrivKey = new PrivateKey();
-        var walletPrivKey = new PrivateKey(null, network);
-//      var network = Constants.TESTNET;
+      var walletPrivKey = new PrivateKey(null, network);
       var secret = client._buildSecret(walletId, walletPrivKey.toString(), network);
-console.log('@test secret '+secret);
-
       var result = client.parseSecret(secret);
       result.walletId.should.equal(walletId);
       result.walletPrivKey.toString().should.equal(walletPrivKey.toString());
@@ -1114,7 +1097,6 @@ console.log('@test secret '+secret);
         m: 1,
         n: 1,
         pubKey: wpk.toPublicKey().toString(),
-//        network: Constants.LIVENET,
         network: 'BTC',
         id: '123',
       };
@@ -1188,7 +1170,6 @@ console.log('@test secret '+secret);
         if (++checks == 2) done();
       });
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1224,7 +1205,6 @@ console.log('@test secret '+secret);
 
     it('should return wallet on successful join', function(done) {
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1240,7 +1220,6 @@ console.log('@test secret '+secret);
 
     it('should not allow to join wallet on bogus device', function(done) {
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1358,7 +1337,6 @@ console.log('@test secret '+secret);
 
     it('should return wallet status even if wallet is not yet complete', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 2, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1377,7 +1355,6 @@ console.log('@test secret '+secret);
 
     it('should return status using v2 version', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1392,7 +1369,6 @@ console.log('@test secret '+secret);
 
     it('should return extended status using v2 version', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err, secret) {
         should.not.exist(err);
@@ -1409,7 +1385,6 @@ console.log('@test secret '+secret);
 
     it('should store walletPrivKey', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err) {
 
@@ -1430,7 +1405,6 @@ console.log('@test secret '+secret);
 
     it('should set walletPrivKey from wallet service', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err) {
 
@@ -1468,7 +1442,6 @@ console.log('@test secret '+secret);
     it('should create a 1-1 wallet with random mnemonic', function(done) {
       clients[0].seedFromRandomWithMnemonic();
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//          network: Constants.LIVENET
           network: 'BTC'
         },
         function(err) {
@@ -1476,7 +1449,6 @@ console.log('@test secret '+secret);
           clients[0].openWallet(function(err) {
             should.not.exist(err);
             should.not.exist(err);
-//            clients[0].credentials.network.should.equal(Constants.LIVENET);
             clients[0].credentials.network.should.equal('BTC');
             clients[0].getMnemonic().split(' ').length.should.equal(12);
             done();
@@ -1488,7 +1460,6 @@ console.log('@test secret '+secret);
       var words = 'forget announce travel fury farm alpha chaos choice talent sting eagle supreme';
       clients[0].seedFromMnemonic(words);
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//          network: Constants.LIVENET,
           network: 'BTC',
           derivationStrategy: 'BIP48',
         },
@@ -1508,7 +1479,6 @@ console.log('@test secret '+secret);
       var words = 'forget announce travel fury farm alpha chaos choice talent sting eagle supreme';
       clients[0].seedFromMnemonic(words);
       clients[0].createWallet('mywallet', 'creator', 2, 3, {
-//          network: Constants.LIVENET
           network: 'BTC'
         },
         function(err, secret) {
@@ -1620,7 +1590,6 @@ console.log('@test secret '+secret);
         10: 18000,
       });
       clients[0].credentials = {};
-//      clients[0].getFeeLevels(Constants.LIVENET, function(err, levels) {
       clients[0].getFeeLevels('BTC', function(err, levels) {
         should.not.exist(err);
         should.exist(levels);
@@ -2837,7 +2806,6 @@ console.log('@test secret '+secret);
                 amount.high.should.equal(0);
                 var s = refund_to.get('script');
                 s = new Script(s.buffer.slice(s.offset, s.limit));
-//                var addr = new Address.fromScript(s, Constants.TESTNET);
                 var addr = new Address.fromScript(s, 'BTCTEST');
                 addr.toString().should.equal(changeAddress);
                 done();
@@ -2932,7 +2900,6 @@ console.log('@test secret '+secret);
               amount.high.should.equal(0);
               var s = refund_to.get('script');
               s = new Script(s.buffer.slice(s.offset, s.limit));
-//              var addr = new Address.fromScript(s, Constants.TESTNET);
               var addr = new Address.fromScript(s, 'BTCTEST');
               addr.toString().should.equal(changeAddress);
               done();
@@ -3397,7 +3364,6 @@ console.log('@test secret '+secret);
     it('should broadcast raw tx', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         var opts = {
-//          network: Constants.TESTNET,
           network: 'BTCTEST',
           rawTx: '0100000001b1b1b1b0d9786e237ec6a4b80049df9e926563fee7bdbc1ac3c4efc3d0af9a1c010000006a47304402207c612d36d0132ed463526a4b2370de60b0aa08e76b6f370067e7915c2c74179b02206ae8e3c6c84cee0bca8521704eddb40afe4590f14fd5d6434da980787ba3d5110121031be732b984b0f1f404840f2479bcc81f90187298efecc67dd83e1f93d9b2860dfeffffff0200ab9041000000001976a91403383bd4cff200de3690db1ed17d0b1a228ea43f88ac25ad6ed6190000001976a9147ccbaf7bcc1e323548bd1d57d7db03f6e6daf76a88acaec70700',
         };
@@ -3866,7 +3832,6 @@ console.log('@test secret '+secret);
       describe('Non-compliant derivation', function() {
         function setup(done) {
           clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//            network: Constants.LIVENET
             network: 'BTC'
           }, function(err) {
             should.not.exist(err);
@@ -3895,7 +3860,6 @@ console.log('@test secret '+secret);
 
         it('should export & import with mnemonics + wallet service', function(done) {
           clients[0].seedFromMnemonic('pink net pet stove boy receive task nephew book spawn pull regret', {
-//            network: Constants.LIVENET,
             network: 'BTC',
             nonCompliantDerivation: true,
           });
@@ -3905,7 +3869,6 @@ console.log('@test secret '+secret);
             importedClient = helpers.newClient(app);
             var spy = sinon.spy(importedClient, 'openWallet');
             importedClient.importFromMnemonic(clients[0].getMnemonic(), {
-//              network: Constants.LIVENET,
               network: 'BTC',
             }, function(err) {
               should.not.exist(err);
@@ -3917,13 +3880,11 @@ console.log('@test secret '+secret);
 
         it('should check wallet service once if specific derivation is not problematic', function(done) {
           clients[0].seedFromMnemonic('relax about label gentle insect cross summer helmet come price elephant seek', {
-//            network: Constants.LIVENET,
             network: 'BTC',
           });
           importedClient = helpers.newClient(app);
           var spy = sinon.spy(importedClient, 'openWallet');
           importedClient.importFromMnemonic(clients[0].getMnemonic(), {
-//            network: Constants.LIVENET,
             network: 'BTC',
           }, function(err) {
             should.exist(err);
@@ -3936,13 +3897,11 @@ console.log('@test secret '+secret);
 
         it('should export & import with xprivkey + wallet service', function(done) {
           clients[0].seedFromMnemonic('relax about label gentle insect cross summer helmet come price elephant seek', {
-//            network: Constants.LIVENET,
             network: 'BTC',
           });
           importedClient = helpers.newClient(app);
           var spy = sinon.spy(importedClient, 'openWallet');
           importedClient.importFromExtendedPrivateKey(clients[0].getKeys().xPrivKey, {
-//            network: Constants.LIVENET,
             network: 'BTC',
           }, function(err) {
             should.exist(err);
@@ -3995,7 +3954,6 @@ console.log('@test secret '+secret);
         client.seedFromRandomWithMnemonic();
         var exported = client.getMnemonic();
         client.createWallet('mywallet', 'creator', 1, 1, {
-//          network: Constants.LIVENET
           network: 'BTC'
         }, function(err) {
           should.not.exist(err);
@@ -4004,7 +3962,6 @@ console.log('@test secret '+secret);
           importedClient.importFromMnemonic(exported, {}, function(err) {
             should.not.exist(err);
             var c2 = importedClient.credentials;
-//            c2.network.should.equal(Constants.LIVENET);
             c2.network.should.equal('BTC');
             c2.xPubKey.should.equal(client.credentials.xPubKey);
             c2.personalEncryptingKey.should.equal(c.personalEncryptingKey);
@@ -4021,7 +3978,6 @@ console.log('@test secret '+secret);
         var exported = 'bounce tonight little spy earn void nominee ankle walk ten type update';
         importedClient = helpers.newClient(app);
         importedClient.importFromMnemonic(exported, {
-//          network: Constants.TESTNET,
           network: 'BTCTEST',
         }, function(err) {
           err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
@@ -4035,7 +3991,6 @@ console.log('@test secret '+secret);
         var exported = 'bounce tonight little spy earn void nominee ankle walk ten type update';
         importedClient = helpers.newClient(app);
         importedClient.importFromMnemonic(exported, {
-//          network: Constants.TESTNET,
           network: 'BTCTEST',
           passphrase: 'hola',
         }, function(err) {
@@ -4290,7 +4245,6 @@ console.log('@test secret '+secret);
           derivationStrategy: 'BIP48',
         });
         clients[0].createWallet('mywallet', 'creator', 1, 1, {
-//          network: Constants.TESTNET
           network: 'BTCTEST'
         }, function(err, secret) {
           should.not.exist(err);
@@ -4345,7 +4299,6 @@ console.log('@test secret '+secret);
     it('should create wallet in proxy from airgapped', function(done) {
       var airgapped = new Client();
       airgapped.seedFromRandom({
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       });
       var exported = airgapped.export({
@@ -4358,7 +4311,6 @@ console.log('@test secret '+secret);
 
       var seedSpy = sinon.spy(proxy, 'seedFromRandom');
       proxy.createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       }, function(err) {
         should.not.exist(err);
@@ -4374,7 +4326,6 @@ console.log('@test secret '+secret);
     it('should fail to create wallet in proxy from airgapped when networks do not match', function(done) {
       var airgapped = new Client();
       airgapped.seedFromRandom({
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       });
       var exported = airgapped.export({
@@ -4388,7 +4339,6 @@ console.log('@test secret '+secret);
       var seedSpy = sinon.spy(proxy, 'seedFromRandom');
       should.not.exist(proxy.credentials.xPrivKey);
       proxy.createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.LIVENET
         network: 'BTC'
       }, function(err) {
         should.exist(err);
@@ -4400,7 +4350,6 @@ console.log('@test secret '+secret);
     it('should be able to sign from airgapped client and broadcast from proxy', function(done) {
       var airgapped = new Client();
       airgapped.seedFromRandom({
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       });
       var exported = airgapped.export({
@@ -4415,7 +4364,6 @@ console.log('@test secret '+secret);
 
           function(next) {
             proxy.createWallet('mywallet', 'creator', 1, 1, {
-//              network: Constants.TESTNET
               network: 'BTCTEST'
             }, function(err) {
               should.not.exist(err);
@@ -4481,7 +4429,6 @@ console.log('@test secret '+secret);
     it('should be able to sign from airgapped client with mnemonics (with unencrypted xpubkey ring)', function(done) {
       var client = helpers.newClient(app);
       client.seedFromRandomWithMnemonic({
-//        network: Constants.TESTNET,
         network: 'BTCTEST',
         passphrase: 'passphrase',
       });
@@ -4494,7 +4441,6 @@ console.log('@test secret '+secret);
 
           function(next) {
             client.createWallet('mywallet', 'creator', 1, 1, {
-//              network: Constants.TESTNET
               network: 'BTCTEST'
             }, function(err) {
               should.not.exist(err);
@@ -4560,7 +4506,6 @@ console.log('@test secret '+secret);
       beforeEach(function(done) {
         airgapped = new Client();
         airgapped.seedFromRandom({
-//          network: Constants.TESTNET
           network: 'BTCTEST'
         });
         var exported = airgapped.export({
@@ -4575,7 +4520,6 @@ console.log('@test secret '+secret);
 
             function(next) {
               proxy.createWallet('mywallet', 'creator', 1, 1, {
-//                network: Constants.TESTNET
                 network: 'BTCTEST'
               }, function(err) {
                 should.not.exist(err);
@@ -4673,8 +4617,6 @@ console.log('@test secret '+secret);
         c.credentials.n.should.equal(1);
 
         c.createAddress(function(err, x0) {
-          // This is the first 'shared' address, created automatically
-          // by old copay
           x0.address.should.equal('2N3w8sJUyAXCQirqNsTayWr7pWADFNdncmf');
           c.getStatus({}, function(err, status) {
             should.not.exist(err);
@@ -4863,11 +4805,9 @@ console.log('@test secret '+secret);
     beforeEach(function(done) {
       c1 = clients[1];
       clients[1].seedFromRandomWithMnemonic({
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       });
       clients[1].createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.TESTNET,
         network: 'BTCTEST',
       }, function() {
         clients[1].encryptPrivateKey(password);
@@ -4909,7 +4849,6 @@ console.log('@test secret '+secret);
     it('should prevent to encrypt airgapped\'s proxy credentials', function() {
       var airgapped = new Client();
       airgapped.seedFromRandom({
-//        network: Constants.TESTNET
         network: 'BTCTEST'
       });
       var exported = airgapped.export({
@@ -5446,7 +5385,6 @@ console.log('@test secret '+secret);
       var client = helpers.newClient(app);
       client.seedFromExtendedPublicKey('xpub661MyMwAqRbcGVyYUcHbZi9KNhN9Tdj8qHi9ZdoUXP1VeKiXDGGrE9tSoJKYhGFE2rimteYdwvoP6e87zS5LsgcEvsvdrpPBEmeWz9EeAUq', 'ledger', '1a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f00');
       client.createWallet('mywallet', 'creator', 1, 1, {
-//        network: Constants.LIVENET
         network: 'BTC'
       }, function(err) {
         should.not.exist(err);
