@@ -1,1 +1,0 @@
-'use strict'; var cLib = require('@owstack/ltc-lib'); module.exports = cLib;

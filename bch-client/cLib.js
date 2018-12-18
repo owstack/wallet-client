@@ -1,1 +1,0 @@
-'use strict'; var cLib = require('@owstack/bch-lib'); module.exports = cLib;
