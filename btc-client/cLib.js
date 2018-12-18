@@ -1,0 +1,1 @@
+'use strict'; var cLib = require('@owstack/btc-lib'); module.exports = cLib;

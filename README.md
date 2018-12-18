@@ -5,20 +5,11 @@ Wallet Client
 [![Build Status](https://img.shields.io/travis/owstack/wallet-client.svg?branch=master&style=flat-square)](https://travis-ci.org/owstack/wallet-client) 
 [![Coverage Status](https://coveralls.io/repos/owstack/wallet-client/badge.svg)](https://coveralls.io/r/owstack/wallet-client)
 
-The client library for
-* [bch-wallet-service](https://github.com/owstack/bch-wallet-service)
-* [btc-wallet-service](https://github.com/owstack/btc-wallet-service)
-* [ltc-wallet-service](https://github.com/owstack/ltc-wallet-service)
-
-## Attribution
-
-This repository was created by copy forking [bitcore-wallet-client commit d986bbb](https://github.com/bitpay/bitcore-wallet-client/commit/d986bbb69d01be56f1cfd09c89625f587de2bc02).
+The client library for the [wallet-service](https://github.com/owstack/wallet-service)
 
 ## Description
 
 This package communicates with multipe wallet services using the REST API. All REST endpoints are wrapped as simple async methods. All relevant responses from wallet services are checked independently by the peers, thus the importance of using this library when talking to a third party wallet service instances.
-
-See [Btc-wallet](https://github.com/owstack/btc-wallet) for a simple CLI wallet implementation that relays on BTCWS and uses btc-wallet-client.
 
 ## Get Started
 
@@ -29,7 +20,7 @@ You can start using this wallet-client in any of these two ways:
 
 ## Example
 
-Start your own local wallet service instance(s). In this example we assume you have `btc-wallet-service` running on your `localhost:3232`.
+Start your own local wallet service instance(s). In this example we assume you have `wallet-service` running on your `localhost:3232`.
 
 Then create two files `irene.js` and `tomas.js` with the content below:
 
@@ -40,10 +31,10 @@ var Client = require('@owstack/wallet-client');
 var BtcClient = Client.BTC;
 
 var fs = require('fs');
-var BTCWS_INSTANCE_URL = 'https://localhost:3232/btcws/api'
+var WS_INSTANCE_URL = 'https://localhost:3232/ws/api'
 
 var btcClient = new BtcClient({
-  baseUrl: BTCWS_INSTANCE_URL,
+  baseUrl: WS_INSTANCE_URL,
   verbose: false
 });
 
@@ -66,7 +57,7 @@ var Client = require('@owstack/wallet-client');
 var BtcClient = Client.BTC;
 
 var fs = require('fs');
-var BTCWS_INSTANCE_URL = 'https://localhost:3232/btcws/api'
+var WS_INSTANCE_URL = 'https://localhost:3232/ws/api'
 
 var secret = process.argv[2];
 if (!secret) {

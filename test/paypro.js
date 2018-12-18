@@ -4,28 +4,32 @@ var chai = chai || require('chai');
 var sinon = sinon || require('sinon');
 var should = chai.should();
 
-var WalletClient = require('../lib');
-var Client = WalletClient.BTC;
+var Client = require('..');
+var WalletClient = Client.BTC;
 
 var owsCommon = require('@owstack/ows-common');
-var PayPro = Client.PayPro;
+var PayPro = WalletClient.PayPro;
 var TestData = require('./testdata');
 var lodash = owsCommon.deps.lodash;
 
 describe('paypro', function() {
-  var xhr, httpNode, clock;
+  var xhr, httpNode, clock, headers;
 
   before(function() {
     // Stub time before cert expiration at Mar 27 2016
     clock = sinon.useFakeTimers(1459105693843);
 
+    headers = {};
     xhr = {};
     xhr.onCreate = function(req) {};
     xhr.open = function(method, url) {};
-    xhr.setRequestHeader = function(k, v) {};
+    xhr.setRequestHeader = function(k, v) {
+      headers[k]=v;
+    };
     xhr.getAllResponseHeaders = function() {
       return 'content-type: test';
     };
+
     xhr.send = function() {
       xhr.response = TestData.payProBuf;
       xhr.onload();
@@ -62,7 +66,21 @@ describe('paypro', function() {
   });
 
   it('Make a PP request with browser', function(done) {
-    PayPro.get({
+    xhr.status=200;
+    new PayPro().get({
+      url: 'http://an.url.com/paypro',
+      xhr: xhr,
+      env: 'browser',
+    }, function(err, res) {
+      headers['Accept'].should.equal('application/bitcoin-paymentrequest');
+      should.not.exist(err);
+      res.should.deep.equal(TestData.payProData);
+      done();
+    });
+  });
+/*
+  it('Make a PP request with browser', function(done) {
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       xhr: xhr,
       env: 'browser',
@@ -72,9 +90,9 @@ describe('paypro', function() {
       done();
     });
   });
-
+*/
   it('Make a PP request with browser with headers', function(done) {
-    PayPro.get({
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       xhr: xhr,
       env: 'browser',
@@ -96,7 +114,7 @@ describe('paypro', function() {
     xhr.send = function() {
       xhr.onerror();
     };
-    PayPro.get({
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       xhr: xhr,
       env: 'browser',
@@ -112,7 +130,7 @@ describe('paypro', function() {
       xhr.onerror();
     };
     xhr.statusText = 'myerror';
-    PayPro.get({
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       xhr: xhr,
       env: 'browser',
@@ -130,7 +148,7 @@ describe('paypro', function() {
     };
 
     xhr.statusText = null;
-    PayPro.get({
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       httpNode: httpNode,
       env: 'node',
@@ -143,7 +161,7 @@ describe('paypro', function() {
 
   it('Make a PP request with node with HTTP error', function(done) {
     httpNode.error = 404;
-    PayPro.get({
+    new PayPro().get({
       url: 'http://an.url.com/paypro',
       httpNode: httpNode,
       env: 'node',
@@ -156,7 +174,7 @@ describe('paypro', function() {
 
   it('Create a PP payment', function() {
     var data = TestData.payProData;
-    var payment = PayPro._createPayment(data.merchant_data, '12ab1234', 'mwRGmB4NE3bG4EbXJKTHf8uvodoUtMCRhZ', 100);
+    var payment = new PayPro().createPayment(data.merchant_data, '12ab1234', 'mwRGmB4NE3bG4EbXJKTHf8uvodoUtMCRhZ', 100);
     var s = '';
     for (var i = 0; i < payment.length; i++) {
       s += payment[i].toString(16);
@@ -175,7 +193,7 @@ describe('paypro', function() {
       xhr: xhr,
       env: 'browser',
     };
-    var payment = PayPro.send(opts, function(err, data) {
+    var payment = new PayPro().send(opts, function(err, data) {
       should.not.exist(err);
       done();
     });
@@ -193,7 +211,7 @@ describe('paypro', function() {
       url: 'http://an.url.com/paypro',
       env: 'node',
     };
-    var payment = PayPro.send(opts, function(err, data) {
+    var payment = new PayPro().send(opts, function(err, data) {
       should.not.exist(err);
       done();
     });

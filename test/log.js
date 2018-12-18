@@ -4,10 +4,10 @@ var chai = chai || require('chai');
 var sinon = sinon || require('sinon');
 var should = chai.should();
 
-var WalletClient = require('../lib');
-var Client = WalletClient.BTC;
+var Client = require('..');
+var WalletClient = Client.BTC;
 
-var log = Client.log;
+var log = WalletClient.log;
 
 describe('log utils', function() {
   afterEach(function() {

@@ -4,15 +4,15 @@ var chai = require('chai');
 var sinon = require('sinon');
 var should = chai.should();
 
-var WalletClient = require('../lib');
-var Client = WalletClient.BTC;
+var Client = require('..');
+var WalletClient = Client.BTC;
 
 var owsCommon = require('@owstack/ows-common');
 var keyLib = require('@owstack/key-lib');
 var HDPrivateKey = keyLib.HDPrivateKey;
 var HDPublicKey = keyLib.HDPublicKey;
 var PrivateKey = keyLib.PrivateKey;
-var Utils = Client.Utils;
+var Utils = WalletClient.Common.Utils;
 var lodash = owsCommon.deps.lodash;
 
 describe('Utils', function() {
@@ -62,119 +62,188 @@ describe('Utils', function() {
   describe('#formatAmount', function() {
     it('should successfully format short amount', function() {
       var cases = [{
-        args: [1, 'bit'],
-        expected: '0',
+        args: [1, 'bit', {
+          includeUnits: false
+        }],
+        expected: '0'
       }, {
-        args: [1, 'btc'],
-        expected: '0.00',
+        args: [1, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.00'
       }, {
-        args: [400050000, 'btc'],
-        expected: '4.0005',
+        args: [400050000, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '4.0005'
       }, {
-        args: [400000000, 'btc'],
-        expected: '4.00',
+        args: [400000000, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '4.00'
       }, {
-        args: [49999, 'btc'],
-        expected: '0.000499',
+        args: [49999, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.0005'
       }, {
-        args: [100000000, 'btc'],
-        expected: '1.00',
+        args: [100000000, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '1.00'
       }, {
-        args: [0, 'bit'],
-        expected: '0',
-      }, {
-        args: [12345678, 'bit'],
-        expected: '123,456',
-      }, {
-        args: [12345678, 'btc'],
-        expected: '0.123456',
-      }, {
-        args: [12345611, 'btc'],
-        expected: '0.123456',
-      }, {
-        args: [1234, 'btc'],
-        expected: '0.000012',
-      }, {
-        args: [1299, 'btc'],
-        expected: '0.000012',
-      }, {
-        args: [1234567899999, 'btc'],
-        expected: '12,345.678999',
+        args: [0, 'bit', {
+          includeUnits: false
+        }],
+        expected: '0'
       }, {
         args: [12345678, 'bit', {
+          includeUnits: false
+        }],
+        expected: '123,457'
+      }, {
+        args: [12345678, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.123457'
+      }, {
+        args: [12345611, 'BTC', {
+            includeUnits: false
+        }],
+        expected: '0.123456'
+      }, {
+        args: [1234, 'BTC', {
+            includeUnits: false
+        }],
+        expected: '0.000012'
+      }, {
+        args: [1299, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.000013'
+      }, {
+        args: [1234567899999, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '12,345.679'
+      }, {
+        args: [12345678, 'bit', {
+          includeUnits: false,
           thousandsSeparator: '.'
         }],
-        expected: '123.456',
+        expected: '123.457'
       }, {
-        args: [12345678, 'btc', {
+        args: [12345678, 'BTC', {
+          includeUnits: false,
           decimalSeparator: ','
         }],
-        expected: '0,123456',
+        expected: '0,123457'
       }, {
-        args: [1234567899999, 'btc', {
+        args: [1234567899999, 'BTC', {
+          includeUnits: false,
           thousandsSeparator: ' ',
           decimalSeparator: ','
         }],
-        expected: '12 345,678999',
-      }, ];
-
-      _.each(cases, function(testCase) {
-        Utils.formatAmount.apply(this, testCase.args).should.equal(testCase.expected);
-      });
-    });
-    it('should successfully format full amount', function() {
-      var cases = [{
-        args: [1, 'bit'],
-        expected: '0.01',
-      }, {
-        args: [1, 'btc'],
-        expected: '0.00000001',
-      }, {
-        args: [0, 'bit'],
-        expected: '0.00',
-      }, {
-        args: [12345678, 'bit'],
-        expected: '123,456.78',
-      }, {
-        args: [12345678, 'btc'],
-        expected: '0.12345678',
-      }, {
-        args: [1234567, 'btc'],
-        expected: '0.01234567',
-      }, {
-        args: [12345611, 'btc'],
-        expected: '0.12345611',
-      }, {
-        args: [1234, 'btc'],
-        expected: '0.00001234',
-      }, {
-        args: [1299, 'btc'],
-        expected: '0.00001299',
-      }, {
-        args: [1234567899999, 'btc'],
-        expected: '12,345.67899999',
+        expected: '12 345,679'
       }, {
         args: [12345678, 'bit', {
-          thousandsSeparator: "'"
+          includeUnits: true,
+          thousandsSeparator: '.'
         }],
-        expected: "123'456.78",
+        expected: '123.457 bits'
       }, {
-        args: [12345678, 'btc', {
+        args: [12345678, 'BTC', {
+          includeUnits: true,
           decimalSeparator: ','
         }],
-        expected: '0,12345678',
+        expected: '0,123457 BTC'
+      }];
+
+      lodash.each(cases, function(testCase) {
+        testCase.args[2] = testCase.args[2] || {};
+        testCase.args[2].fullPrecision = false;
+        var amount = new Utils().formatAmount(testCase.args[0], testCase.args[1], testCase.args[2]);
+        amount.should.equal(testCase.expected);
+      });
+    });
+
+    it('should successfully format full amount', function() {
+      var cases = [{
+        args: [1, 'bit', {
+          includeUnits: false
+        }],
+        expected: '0.01'
       }, {
-        args: [1234567899999, 'btc', {
+        args: [1, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.00000001'
+      }, {
+        args: [0, 'bit', {
+          includeUnits: false
+        }],
+        expected: '0.00'
+      }, {
+        args: [12345678, 'bit', {
+          includeUnits: false
+        }],
+        expected: '123,456.78'
+      }, {
+        args: [12345678, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.12345678'
+      }, {
+        args: [1234567, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.01234567'
+      }, {
+        args: [12345611, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.12345611'
+      }, {
+        args: [1234, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.00001234'
+      }, {
+        args: [1299, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '0.00001299'
+      }, {
+        args: [1234567899999, 'BTC', {
+          includeUnits: false
+        }],
+        expected: '12,345.67899999'
+      }, {
+        args: [12345678, 'bit', {
+          thousandsSeparator: "'",
+          includeUnits: false
+        }],
+        expected: "123'456.78"
+      }, {
+        args: [12345678, 'BTC', {
+          decimalSeparator: ',',
+          includeUnits: false
+        }],
+        expected: '0,12345678'
+      }, {
+        args: [1234567899999, 'BTC', {
           thousandsSeparator: ' ',
-          decimalSeparator: ','
+          decimalSeparator: ',',
+          includeUnits: false
         }],
-        expected: '12 345,67899999',
+        expected: '12 345,67899999'
       }, ];
 
-      _.each(cases, function(testCase) {
+      lodash.each(cases, function(testCase) {
         testCase.args[2] = testCase.args[2] || {};
         testCase.args[2].fullPrecision = true;
-        Utils.formatAmount.apply(this, testCase.args).should.equal(testCase.expected);
+        var amount = new Utils().formatAmount(testCase.args[0], testCase.args[1], testCase.args[2]);
+        amount.should.equal(testCase.expected);
       });
     });
   });
@@ -210,7 +279,7 @@ describe('Utils', function() {
         message: {
           one: 'one',
           two: 'two'
-        },
+        }
       };
 
       var header2 = {
@@ -240,9 +309,9 @@ describe('Utils', function() {
       var values = [
         null,
         123,
-        'x123',
+        'x123'
       ];
-      _.each(values, function(value) {
+      lodash.each(values, function(value) {
         var valid = true;
         try {
           Utils.privateKeyToAESKey(value);
@@ -259,7 +328,6 @@ describe('Utils', function() {
       var reqPubKey = (new PrivateKey).toPublicKey();
       var xPrivKey = new HDPrivateKey();
       var xPubKey = new HDPublicKey(xPrivKey);
-
 
       var sig = Utils.signRequestPubKey(reqPubKey.toString(), xPrivKey);
       var valid = Utils.verifyRequestPubKey(reqPubKey.toString(), sig, xPubKey);
@@ -278,4 +346,5 @@ describe('Utils', function() {
       valid.should.be.equal(false);
     });
   });
+
 });
