@@ -3,10 +3,13 @@
 var BaseWalletClient = require('../base-client');
 var BaseVerifier = BaseWalletClient.Verifier;
 
+var Common = require('./common');
 var log = require('./log');
+var Utils = Common.Utils;
 
 var context = {
-	log: log
+	log: log,
+	Utils, Utils
 };
 
 class CVerifier extends BaseVerifier {

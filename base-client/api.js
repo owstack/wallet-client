@@ -4,12 +4,14 @@ var owsCommon = require('@owstack/ows-common');
 var keyLib = require('@owstack/key-lib');
 var async = require('async');
 var Base58 = owsCommon.encoding.Base58;
+var Base58Check = owsCommon.encoding.Base58Check;
 var Bip38 = require('bip38');
 var Common = require('./common');
 var Constants = owsCommon.Constants;
 var Credentials = require('@owstack/credentials-lib');
 var Errors = require('./errors');
 var EventEmitter = require('events').EventEmitter;
+var Hash = owsCommon.Hash;
 var HDPrivateKey = keyLib.HDPrivateKey;
 var HDPublicKey = keyLib.HDPublicKey;
 var Mnemonic = require('@owstack/mnemonic-lib');
@@ -24,8 +26,6 @@ var url = require('url');
 var util = require('util');
 var lodash = owsCommon.deps.lodash;
 var $ = require('preconditions').singleton();
-
-var BASE_URL = 'http://localhost:3232/ws/api';
 
 /**
  * @desc ClientAPI constructor.
@@ -45,11 +45,12 @@ class API extends EventEmitter {
     this.LIVENET = this.ctx.Networks.livenet.code;
     this.TESTNET = this.ctx.Networks.testnet.code;
     this.COIN = this.ctx.Networks.coin;
+    this.atomicsName = this.ctx.Unit().atomicsName();
 
     opts = opts || {};
 
     this.request = opts.request || request;
-    this.baseUrl = opts.baseUrl || BASE_URL;
+    this.baseUrl = opts.baseUrl || this.ctx.Defaults.BASE_URL;
     this.payProHttp = null; // Only for testing
     this.doNotVerifyPayPro = opts.doNotVerifyPayPro;
     this.timeout = opts.timeout || 50000;
@@ -448,11 +449,11 @@ API.prototype.decryptBIP38PrivateKey = function(encryptedPrivateKeyBase58, passp
     return cb(new Error('Could not decrypt BIP38 private key', ex));
   }
 
-  var privateKey = new btcLib.PrivateKey(privateKeyWif);
+  var privateKey = new PrivateKey(privateKeyWif);
   var address = self.ctx.Address(privateKey.publicKey).toString();
   var addrBuff = new Buffer(address, 'ascii');
-  var actualChecksum = btcLib.crypto.Hash.sha256sha256(addrBuff).toString('hex').substring(0, 8);
-  var expectedChecksum = btcLib.encoding.Base58Check.decode(encryptedPrivateKeyBase58).toString('hex').substring(6, 14);
+  var actualChecksum = Hash.sha256sha256(addrBuff).toString('hex').substring(0, 8);
+  var expectedChecksum = Base58Check.decode(encryptedPrivateKeyBase58).toString('hex').substring(6, 14);
 
   if (actualChecksum != expectedChecksum)
     return cb(new Error('Incorrect passphrase'));
@@ -471,7 +472,7 @@ API.prototype.getBalanceFromPrivateKey = function(privateKey, cb) {
     if (err) {
       return cb(err);
     }
-    return cb(null, lodash.sumBy(utxos, 'satoshis'), address.toString());
+    return cb(null, lodash.sumBy(utxos, self.atomicsName), address.toString());
   });
 };
 
@@ -495,7 +496,7 @@ API.prototype.buildTxFromPrivateKey = function(privateKey, destinationAddress, o
       }
 
       var fee = opts.fee || 10000;
-      var amount = lodash.sumBy(utxos, 'satoshis') - fee;
+      var amount = lodash.sumBy(utxos, self.atomicsName) - fee;
       if (amount <= 0) {
         return next(new Errors.INSUFFICIENT_FUNDS);
       }
@@ -1169,11 +1170,11 @@ API.prototype.getUtxos = function(opts, cb) {
  * @param {string} opts.txProposalId - Optional. If provided it will be used as this TX proposal ID. Should be unique in the scope of the wallet.
  * @param {Array} opts.outputs - List of outputs.
  * @param {string} opts.outputs[].toAddress - Destination address.
- * @param {number} opts.outputs[].amount - Amount to transfer in satoshi.
+ * @param {number} opts.outputs[].amount - Amount to transfer in atomic units.
  * @param {string} opts.outputs[].message - A message to attach to this output.
  * @param {string} opts.message - A message to attach to this transaction.
  * @param {number} opts.feeLevel[='normal'] - Optional. Specify the fee level for this TX ('priority', 'normal', 'economy', 'superEconomy').
- * @param {number} opts.feePerKb - Optional. Specify the fee per KB for this TX (in satoshi).
+ * @param {number} opts.feePerKb - Optional. Specify the fee per KB for this TX (in atomic units).
  * @param {string} opts.changeAddress - Optional. Use this address as the change address for the tx. The address should belong to the wallet. In the case of singleAddress wallets, the first main address will be used.
  * @param {Boolean} opts.sendMax - Optional. Send maximum amount of funds that make sense under the specified fee/feePerKb conditions. (defaults to false).
  * @param {string} opts.payProUrl - Optional. Paypro URL for peers to verify TX
@@ -1593,7 +1594,7 @@ API.prototype.signTxProposalFromAirGapped = function(txp, encryptedPkr, m, n, pa
 /**
  * Sign transaction proposal from AirGapped
  *
- * @param {String} key - A mnemonic phrase or an xprv HD private key
+ * @param {String} key - A mnemonic phrase or an extended HD private key
  * @param {Object} txp
  * @param {String} unencryptedPkr
  * @param {Number} m
@@ -1618,12 +1619,15 @@ API.prototype.signTxProposalFromAirGappedWithNewClient = function(key, txp, unen
     baseUrl: 'https://ws.example.com/ws/api'
   });
 
-  if (key.slice(0, 4) === 'xprv' || key.slice(0, 4) === 'tprv') {
-    if (key.slice(0, 4) === 'xprv' && txp.network == self.TESTNET) {
-      throw new Error("testnet HD keys must start with tprv");
+  var xprivPrefixLivenet = Networks.livenet.version.xprivkey.text;
+  var xprivPrefixTestnet = Networks.testnet.version.xprivkey.text;
+
+  if (key.slice(0, 4) === xprivPrefixLivenet || key.slice(0, 4) === xprivPrefixTestnet) {
+    if (key.slice(0, 4) === xprivPrefixLivenet && txp.network == self.TESTNET) {
+      throw new Error('testnet HD keys must start with ' + xprivPrefixTestnet);
     }
-    if (key.slice(0, 4) === 'tprv' && txp.network == self.LIVENET) {
-      throw new Error("livenet HD keys must start with xprv");
+    if (key.slice(0, 4) === xprivPrefixTestnet && txp.network == self.LIVENET) {
+      throw new Error('livenet HD keys must start with ' + xprivPrefixLivenet);
     }
     newClient.seedFromExtendedPrivateKey(key, {
       'account': opts.account,
@@ -2017,7 +2021,7 @@ API.prototype.getTxNotes = function(opts, cb) {
  * @param {Object} opts
  * @param {string} opts.code - Currency ISO code.
  * @param {Date} [opts.ts] - A timestamp to base the rate on (default Date.now()).
- * @param {String} [opts.provider] - A provider of exchange rates (default 'BitPay').
+ * @param {String} [opts.provider] - A provider of exchange rates.
  * @returns {Object} rates - The exchange rate.
  */
 API.prototype.getFiatRate = function(opts, cb) {
@@ -2114,7 +2118,7 @@ API.prototype.txConfirmationUnsubscribe = function(txid, cb) {
  * Returns send max information.
  * @param {String} opts
  * @param {number} opts.feeLevel[='normal'] - Optional. Specify the fee level ('priority', 'normal', 'economy', 'superEconomy').
- * @param {number} opts.feePerKb - Optional. Specify the fee per KB (in satoshi).
+ * @param {number} opts.feePerKb - Optional. Specify the fee per KB (in atomic unit).
  * @param {Boolean} opts.excludeUnconfirmedUtxos - Indicates it if should use (or not) the unconfirmed utxos
  * @param {Boolean} opts.returnInputs - Indicates it if should return (or not) the inputs
  * @return {Callback} cb - Return error (if exists) and object result
@@ -2222,10 +2226,12 @@ API.prototype.buildTx = function(txp) {
     lodash.each(txp.outputs, function(o) {
       $.checkState(o.script || o.toAddress, 'Output should have either toAddress or script specified');
       if (o.script) {
-        t.addOutput(new self.ctx.Transaction.Output({
-          script: o.script,
-          satoshis: o.amount
-        }));
+
+        var out = {};
+        out.script = o.script;
+        out[self.atomicsName] = o.amount;
+
+        t.addOutput(new self.ctx.Transaction.Output(out));
       } else {
         t.to(o.toAddress, o.amount);
       }
@@ -2250,10 +2256,10 @@ API.prototype.buildTx = function(txp) {
 
   // Validate inputs vs outputs independently.
   var totalInputs = lodash.reduce(txp.inputs, function(memo, i) {
-    return +i.satoshis + memo;
+    return +i[self.atomicsName] + memo;
   }, 0);
   var totalOutputs = lodash.reduce(t.outputs, function(memo, o) {
-    return +o.satoshis + memo;
+    return +o[self.atomicsName] + memo;
   }, 0);
 
   $.checkState(totalInputs - totalOutputs >= 0);
@@ -2262,8 +2268,8 @@ API.prototype.buildTx = function(txp) {
   return t;
 };
 
-API.prototype.formatAmount = function(satoshis, unit, opts) {
-  return this.utils.formatAmount(satoshis, unit, opts);
+API.prototype.formatAmount = function(atomics, unit, opts) {
+  return this.utils.formatAmount(atomics, unit, opts);
 };
 
 /**

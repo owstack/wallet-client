@@ -13,6 +13,6 @@ Client.errors = require('./errors');
 Client.Log = require('./log');
 Client.PayPro = require('./paypro');
 Client.sjcl = require('sjcl');
-Client.Verifier = require('./Verifier');
+Client.Verifier = require('./verifier');
 
 module.exports = Client;

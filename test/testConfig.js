@@ -3,11 +3,11 @@
 var config = {
   basePath: '/ws/api',
   port: 3232,
-  ignoreRateLimiter: false,
+  ignoreRateLimiter: true,
 
   // Log levels; debug, warn, info, error
   log: {
-    disable: false,
+    disable: true,
     level: 'info'
   },
 
@@ -82,7 +82,7 @@ var config = {
   },
 
   fiatRateServiceOpts: {
-    defaultProvider: 'BitPay',
+    defaultProvider: 'OpenWalletStack',
     fetchInterval: 60 // in minutes
   },
 

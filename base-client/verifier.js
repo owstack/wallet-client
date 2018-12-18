@@ -2,10 +2,8 @@
 
 var owsCommon = require('@owstack/ows-common');
 var keyLib = require('@owstack/key-lib');
-var Common = require('./common');
 var Credentials = require('@owstack/credentials-lib');
 var PrivateKey = keyLib.PrivateKey;
-var Utils = Common.Utils;
 var lodash = owsCommon.deps.lodash;
 var $ = require('preconditions').singleton();
 
@@ -74,8 +72,8 @@ Verifier.prototype.checkCopayers = function(credentials, copayers) {
       self.ctx.log.error('Missing copayer fields in server response');
       error = true;
     } else {
-      var hash = Utils.getCopayerHash(copayer.encryptedName || copayer.name, copayer.xPubKey, copayer.requestPubKey);
-      if (!Utils.verifyMessage(hash, copayer.signature, walletPubKey)) {
+      var hash = self.ctx.Utils.getCopayerHash(copayer.encryptedName || copayer.name, copayer.xPubKey, copayer.requestPubKey);
+      if (!self.ctx.Utils.verifyMessage(hash, copayer.signature, walletPubKey)) {
         self.ctx.log.error('Invalid signatures in server response');
         error = true;
       }
@@ -94,6 +92,7 @@ Verifier.prototype.checkCopayers = function(credentials, copayers) {
 };
 
 Verifier.prototype.checkProposalCreation = function(args, txp, encryptingKey) {
+  var self = this;
   function strEqual(str1, str2) {
     return ((!str1 && !str2) || (str1 === str2));
   }
@@ -108,7 +107,7 @@ Verifier.prototype.checkProposalCreation = function(args, txp, encryptingKey) {
     if (o1.amount != o2.amount) return false;
     var decryptedMessage = null;
     try {
-      decryptedMessage = Utils.decryptMessage(o2.message, encryptingKey);
+      decryptedMessage = self.ctx.Utils.decryptMessage(o2.message, encryptingKey);
     } catch (e) {
       return false;
     }
@@ -126,7 +125,7 @@ Verifier.prototype.checkProposalCreation = function(args, txp, encryptingKey) {
 
   var decryptedMessage = null;
   try {
-    decryptedMessage = Utils.decryptMessage(args.message, encryptingKey);
+    decryptedMessage = self.ctx.Utils.decryptMessage(args.message, encryptingKey);
   } catch (e) {
     return false;
   }
@@ -142,25 +141,30 @@ Verifier.prototype.checkTxProposalSignature = function(credentials, txp) {
   $.checkState(credentials.isComplete());
 
   var creatorKeys = lodash.find(credentials.publicKeyRing, function(item) {
-    if (Credentials.xPubToCopayerId(item.xPubKey) === txp.creatorId) return true;
+    if (Credentials.xPubToCopayerId(item.xPubKey) === txp.creatorId) {
+      return true;
+    }
   });
 
-  if (!creatorKeys) return false;
+  if (!creatorKeys) {
+    return false;
+  }
   var creatorSigningPubKey;
 
   // If the txp using a selfsigned pub key?
   if (txp.proposalSignaturePubKey) {
-
     // Verify it...
-    if (!Utils.verifyRequestPubKey(txp.proposalSignaturePubKey, txp.proposalSignaturePubKeySig, creatorKeys.xPubKey))
+    if (!self.ctx.Utils.verifyRequestPubKey(txp.proposalSignaturePubKey, txp.proposalSignaturePubKeySig, creatorKeys.xPubKey)) {
       return false;
+    }
 
     creatorSigningPubKey = txp.proposalSignaturePubKey;
   } else {
     creatorSigningPubKey = creatorKeys.requestPubKey;
   }
-  if (!creatorSigningPubKey) return false;
-
+  if (!creatorSigningPubKey) {
+    return false;
+  }
 
   var hash;
   if (parseInt(txp.version) >= 3) {
@@ -171,11 +175,13 @@ Verifier.prototype.checkTxProposalSignature = function(credentials, txp) {
   }
 
   self.ctx.log.debug('Regenerating & verifying tx proposal hash -> Hash: ', hash, ' Signature: ', txp.proposalSignature);
-  if (!Utils.verifyMessage(hash, txp.proposalSignature, creatorSigningPubKey))
+  if (!self.ctx.Utils.verifyMessage(hash, txp.proposalSignature, creatorSigningPubKey)) {
     return false;
+  }
 
-  if (!self.checkAddress(credentials, txp.changeAddress))
+  if (!self.checkAddress(credentials, txp.changeAddress)) {
     return false;
+  }
 
   return true;
 };

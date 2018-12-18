@@ -254,7 +254,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Build & sign txs', function() {
+  describe('Build & sign txs', function() {
     var masterPrivateKey = 'tprv8ZgxMBicQKsPd8U9aBBJ5J2v8XMwKwZvf8qcu2gLK5FRrsrPeSgkEcNHqKx4zwv6cP536m68q2UD7wVM24zdSCpaJRmpowaeJTeVMXL5v5k';
     var derivedPrivateKey = {
       'BIP44': new HDPrivateKey(masterPrivateKey).deriveChild("m/44'/1'/0'").toString(),
@@ -738,7 +738,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Wallet secret round trip', function() {
+  describe('Wallet secret round trip', function() {
     it('should create secret and parse secret', function() {
       var i = 0;
       while (i++ < 100) {
@@ -773,7 +773,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Notification polling', function() {
+  describe('Notification polling', function() {
     var clock, interval;
 
     beforeEach(function() {
@@ -823,7 +823,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Wallet Creation', function() {   
+  describe('Wallet Creation', function() {   
     it('should fail to create wallet in bogus device', function(done) {
       clients[0].seedFromRandomWithMnemonic();
       clients[0].keyDerivationOk = false;
@@ -1277,7 +1277,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('#getMainAddresses', function() {
+  describe('#getMainAddresses', function() {
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         clients[0].createAddress(function(err, x0) {
@@ -1318,7 +1318,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('#getUtxos', function() {
+  describe('#getUtxos', function() {
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         done();
@@ -1364,7 +1364,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Network fees', function() {
+  describe('Network fees', function() {
     it('should get current fee levels', function(done) {
       blockchainExplorerMock.setFeeLevels({
         1: 40000,
@@ -1381,7 +1381,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Version', function() {
+  describe('Version', function() {
     it('should get version of wallet service', function(done) {
       clients[0].credentials = {};
       clients[0].getVersion(function(err, version) {
@@ -1399,7 +1399,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Preferences', function() {
+  describe('Preferences', function() {
     it('should save and retrieve preferences', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0].getPreferences(function(err, preferences) {
@@ -1421,7 +1421,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Fiat rates', function() {
+  describe('Fiat rates', function() {
     it('should get fiat exchange rate', function(done) {
       var now = Date.now();
       helpers.createAndJoinWallet(clients, 1, 1, function() {
@@ -1439,7 +1439,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Push notifications', function() {
+  describe('Push notifications', function() {
     it('should do a post request', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0]._doRequest = sinon.stub().yields(null, {
@@ -1465,7 +1465,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Tx confirmations', function() {
+  describe('Tx confirmations', function() {
     it('should do a post request', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0]._doRequest = sinon.stub().yields(null, {
@@ -1493,7 +1493,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Get send max information', function() {
+  describe('Get send max information', function() {
     var balance;
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
@@ -1591,7 +1591,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Address Creation', function() {
+  describe('Address Creation', function() {
     it('should be able to create address in 1-of-1 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0].createAddress(function(err, x) {
@@ -1714,7 +1714,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Notifications', function() {
+  describe('Notifications', function() {
     var clock;
     beforeEach(function(done) {
       this.timeout(5000);
@@ -1776,7 +1776,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Transaction Proposals Creation and Locked funds', function() {
+  describe('Transaction Proposals Creation and Locked funds', function() {
     var myAddress;
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
@@ -2450,7 +2450,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Payment Protocol', function() {
+  describe('Payment Protocol', function() {
     var http;
 
     describe('Shared wallet', function() {
@@ -2769,7 +2769,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Proposals with explicit ID', function() {
+  describe('Proposals with explicit ID', function() {
     it('Should create and publish a proposal', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         var id = 'anId';
@@ -2810,7 +2810,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Multiple output proposals', function() {
+  describe('Multiple output proposals', function() {
     var toAddress = 'n2TBMPzPECGUfcT2EByiTJ12TPZkhN2mN5';
     var opts = {
       message: 'hello',
@@ -2891,7 +2891,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Transactions Signatures and Rejection', function() {
+  describe('Transactions Signatures and Rejection', function() {
     this.timeout(5000);
     it('Send and broadcast in 1-1 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
@@ -3008,7 +3008,7 @@ describe('client API', function() {
       });
     });
 
-    it.skip('Send, reject actions in 2-3 wallet must have correct copayerNames', function(done) {
+    it('Send, reject actions in 2-3 wallet must have correct copayerNames', function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
         clients[0].createAddress(function(err, x0) {
           should.not.exist(err);
@@ -3142,7 +3142,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Broadcast raw transaction', function() {
+  describe('Broadcast raw transaction', function() {
     it('should broadcast raw tx', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         var opts = {
@@ -3158,7 +3158,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Transaction history', function() {
+  describe('Transaction history', function() {
     it('should get transaction history', function(done) {
       blockchainExplorerMock.setHistory(TestData.history);
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
@@ -3317,7 +3317,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Transaction notes', function(done) {
+  describe('Transaction notes', function(done) {
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 2, function(w) {
         done();
@@ -3477,8 +3477,8 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Mobility, backup & restore', function() {
-    describe.skip('Export & Import', function() {
+  describe('Mobility, backup & restore', function() {
+    describe('Export & Import', function() {
       var address, importedClient;
       describe('Compliant derivation', function() {
         beforeEach(function(done) {
@@ -3676,7 +3676,7 @@ describe('client API', function() {
       });
     });
 
-    describe.skip('#validateKeyDerivation', function() {
+    describe('#validateKeyDerivation', function() {
       beforeEach(function(done) {
         helpers.createAndJoinWallet(clients, 1, 1, function() {
           done();
@@ -3708,7 +3708,7 @@ describe('client API', function() {
       });
     });
 
-    describe.skip('Mnemonic related tests', function() {
+    describe('Mnemonic related tests', function() {
       var importedClient;
 
       it('should import with mnemonics livenet', function(done) {
@@ -3764,7 +3764,7 @@ describe('client API', function() {
       });
     });
 
-    describe.skip('Recovery', function() {
+    describe('Recovery', function() {
       it('should be able to gain access to a 1-1 wallet with just the xPriv', function(done) {
         helpers.createAndJoinWallet(clients, 1, 1, function() {
           var xpriv = clients[0].credentials.xPrivKey;
@@ -4053,7 +4053,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Air gapped related flows', function() {
+  describe('Air gapped related flows', function() {
     it('should create wallet in proxy from airgapped', function(done) {
       var airgapped = new WalletClient.API();
       airgapped.seedFromRandom({
@@ -4348,7 +4348,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('Private key encryption', function() {
+  describe('Private key encryption', function() {
     var password = 'jesusissatoshi';
     var c1, c2;
     var importedClient;
@@ -4525,7 +4525,7 @@ describe('client API', function() {
     });
   });
 
-  describe.skip('#addAccess', function() {
+  describe('#addAccess', function() {
     describe('1-1 wallets', function() {
       var opts;
 
@@ -4689,7 +4689,7 @@ describe('client API', function() {
   });
 
   describe('Sweep paper wallet', function() {
-    it.skip('should decrypt bip38 encrypted private key', function(done) {
+    it('should decrypt bip38 encrypted private key', function(done) {
       this.timeout(60000);
       clients[0].decryptBIP38PrivateKey('6PfRh9ZnWtiHrGoPPSzXe6iafTXc6FSXDhSBuDvvDmGd1kpX2Gvy1CfTcA', 'passphrase', {}, function(err, result) {
         should.not.exist(err);
@@ -4698,7 +4698,7 @@ describe('client API', function() {
       });
     });
 
-    it.skip('should fail to decrypt bip38 encrypted private key with incorrect passphrase', function(done) {
+    it('should fail to decrypt bip38 encrypted private key with incorrect passphrase', function(done) {
       this.timeout(60000);
       clients[0].decryptBIP38PrivateKey('6PfRh9ZnWtiHrGoPPSzXe6iafTXc6FSXDhSBuDvvDmGd1kpX2Gvy1CfTcA', 'incorrect passphrase', {}, function(err, result) {
         should.exist(err);
