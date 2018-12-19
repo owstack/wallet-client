@@ -7,15 +7,15 @@ var fs = require('fs-extra');
 var clients = [{
   coin: 'Bitcoin Cash',
   lib: '@owstack/bch-lib',
-  dir: 'bch-client'
+  dir: 'lib/bch-client'
 }, {
   coin: 'Bitcoin',
   lib: '@owstack/btc-lib',
-  dir: 'btc-client'
+  dir: 'lib/btc-client'
 }, {
   coin: 'Litecoin',
   lib: '@owstack/ltc-lib',
-  dir: 'ltc-client'
+  dir: 'lib/ltc-client'
 }];
 
 var cmd = process.argv[2];

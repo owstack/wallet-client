@@ -1,7 +1,7 @@
 # Generated service libraries
-bch-client
-btc-client
-ltc-client
+lib/bch-client
+lib/btc-client
+lib/ltc-client
 
 # Logs
 logs

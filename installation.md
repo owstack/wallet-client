@@ -16,6 +16,16 @@ npm install
 ```
 
 ### Run tests
+Use the following to run tests
 ```bash
 npm test
+```
+Use the following to run coverage during testing
+```bash
+npm run coverage
+```
+
+### Rebuild wallet-client.js
+```bash
+make
 ```
