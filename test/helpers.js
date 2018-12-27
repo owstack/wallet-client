@@ -103,10 +103,10 @@ helpers.createAndJoinWallet = function(clients, m, n, opts, cb) {
   opts = opts || {};
 
   clients[0].seedFromRandomWithMnemonic({
-    network: opts.network || 'TESTNET'
+    networkName: opts.network || 'testnet'
   });
   clients[0].createWallet('mywallet', 'creator', m, n, {
-    network: opts.network || 'TESTNET',
+    networkName: opts.network || 'testnet',
     singleAddress: !!opts.singleAddress,
   }, function(err, secret) {    
     should.not.exist(err);
@@ -119,7 +119,7 @@ helpers.createAndJoinWallet = function(clients, m, n, opts, cb) {
       function(next) {
         async.each(lodash.range(1, n), function(i, cb) {
           clients[i].seedFromRandomWithMnemonic({
-            network: 'TESTNET'
+            networkName: 'testnet'
           });
           clients[i].joinWallet(secret, 'copayer ' + i, {}, cb);
         }, next);
@@ -145,6 +145,7 @@ helpers.tamperResponse = function(clients, method, url, args, tamper, cb) {
   clients = [].concat(clients);
   // Use first client to get a clean response from server
   clients[0]._doRequest(method, url, args, false, function(err, result) {
+console.log(method, url, args);
     should.not.exist(err);
     tamper(result);
     // Return tampered data for every client in the list

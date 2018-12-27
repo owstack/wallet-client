@@ -142,7 +142,7 @@ describe('client API', function() {
         var client = helpers.newClient(expressApp.app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-          network: 'TESTNET'
+          networkName: 'testnet'
         },
         function(err) {
           err.should.be.an.instanceOf(Error);
@@ -169,7 +169,7 @@ describe('client API', function() {
         var client = helpers.newClient(expressApp.app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-            network: 'TESTNET'
+            networkName: 'testnet'
           },
           function(err) {
             err.should.be.an.instanceOf(Error);
@@ -196,7 +196,7 @@ describe('client API', function() {
         var client = helpers.newClient(expressApp.app);
         client.storage = s2;
         client.createWallet('1', '2', 1, 1, {
-            network: 'TESTNET'
+            networkName: 'testnet'
           },
           function(err) {
             err.should.be.an.instanceOf(Errors.NOT_FOUND);
@@ -219,7 +219,7 @@ describe('client API', function() {
     it('should handle critical errors (Case5)', function(done) {
       clients[0].request = helpers.stubRequest('some error');
       clients[0].createWallet('mywallet', 'creator', 1, 2, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.exist(err);
         err.should.be.an.instanceOf(Errors.CONNECTION_ERROR);
@@ -743,14 +743,14 @@ describe('client API', function() {
       var i = 0;
       while (i++ < 100) {
         var walletId = Uuid.v4();
-        var network = i % 2 == 0 ? 'TESTNET' : 'BTC';
-        var walletPrivKey = new PrivateKey(null, network);
+        var networkName = i % 2 == 0 ? 'testnet' : 'btc';
+        var walletPrivKey = new PrivateKey(null, networkName);
         var client = new WalletClient.API();
-        var secret = client._buildSecret(walletId, walletPrivKey, network);
+        var secret = client._buildSecret(walletId, walletPrivKey, networkName);
         var result = client.parseSecret(secret);
         result.walletId.should.equal(walletId);
         result.walletPrivKey.toString().should.equal(walletPrivKey.toString());
-        result.network.should.equal(network);
+        result.networkName.should.equal(networkName);
       };
     });
 
@@ -763,13 +763,13 @@ describe('client API', function() {
     it('should create secret and parse secret from string ', function() {
       var client = new WalletClient.API();
       var walletId = Uuid.v4();
-      var network = 'TESTNET';
-      var walletPrivKey = new PrivateKey(null, network);
-      var secret = client._buildSecret(walletId, walletPrivKey.toString(), network);
+      var networkName = 'testnet';
+      var walletPrivKey = new PrivateKey(null, networkName);
+      var secret = client._buildSecret(walletId, walletPrivKey.toString(), networkName);
       var result = client.parseSecret(secret);
       result.walletId.should.equal(walletId);
       result.walletPrivKey.toString().should.equal(walletPrivKey.toString());
-      result.network.should.equal(network);
+      result.networkName.should.equal(networkName);
     });
   });
 
@@ -876,7 +876,7 @@ describe('client API', function() {
         m: 1,
         n: 1,
         pubKey: wpk.toPublicKey().toString(),
-        network: 'BTC',
+        networkName: 'btc',
         id: '123',
       };
       clients[0]._doPostRequest('/v1/wallets/', args, function(err, wallet) {
@@ -949,7 +949,7 @@ describe('client API', function() {
         if (++checks == 2) done();
       });
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         clients[0].isComplete().should.equal(false);
@@ -984,7 +984,7 @@ describe('client API', function() {
 
     it('should return wallet on successful join', function(done) {
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         clients[1].joinWallet(secret, 'guest', {}, function(err, wallet) {
@@ -999,7 +999,7 @@ describe('client API', function() {
 
     it('should not allow to join wallet on bogus device', function(done) {
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         clients[1].keyDerivationOk = false;
@@ -1116,7 +1116,7 @@ describe('client API', function() {
 
     it('should return wallet status even if wallet is not yet complete', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 2, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         should.exist(secret);
@@ -1134,7 +1134,7 @@ describe('client API', function() {
 
     it('should return status using v1 version', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         clients[0].getStatus({}, function(err, status) {
@@ -1148,7 +1148,7 @@ describe('client API', function() {
 
     it('should return extended status using v1 version', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err, secret) {
         should.not.exist(err);
         clients[0].getStatus({
@@ -1164,7 +1164,7 @@ describe('client API', function() {
 
     it('should store walletPrivKey', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err) {
 
         var key = clients[0].credentials.walletPrivKey;
@@ -1184,7 +1184,7 @@ describe('client API', function() {
 
     it('should set walletPrivKey from wallet service', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err) {
 
         var wkey = clients[0].credentials.walletPrivKey;
@@ -1224,14 +1224,14 @@ describe('client API', function() {
     it('should create a 1-1 wallet with random mnemonic', function(done) {
       clients[0].seedFromRandomWithMnemonic();
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-          network: 'BTC'
+          networkName: 'btc'
         },
         function(err) {
           should.not.exist(err);
           clients[0].openWallet(function(err) {
             should.not.exist(err);
             should.not.exist(err);
-            clients[0].credentials.network.should.equal('BTC');
+            clients[0].credentials.networkName.should.equal('btc');
             clients[0].getMnemonic().split(' ').length.should.equal(12);
             done();
           });
@@ -1242,7 +1242,7 @@ describe('client API', function() {
       var words = 'forget announce travel fury farm alpha chaos choice talent sting eagle supreme';
       clients[0].seedFromMnemonic(words);
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
-          network: 'BTC',
+          networkName: 'btc',
           derivationStrategy: 'BIP48',
         },
         function(err) {
@@ -1261,7 +1261,7 @@ describe('client API', function() {
       var words = 'forget announce travel fury farm alpha chaos choice talent sting eagle supreme';
       clients[0].seedFromMnemonic(words);
       clients[0].createWallet('mywallet', 'creator', 2, 3, {
-          network: 'BTC'
+          networkName: 'btc'
         },
         function(err, secret) {
           should.not.exist(err);
@@ -1307,7 +1307,7 @@ describe('client API', function() {
         toAddress: 'n2TBMPzPECGUfcT2EByiTJ12TPZkhN2mN5',
         message: 'hello 1-1',
       };
-      helpers.createAndPublishTxProposal(clients[0], opts, function(err, x) {
+      helpers.createAndPublishTxProposal(clients[0], opts, function(err, x) {        
         should.not.exist(err);
         clients[0].getMainAddresses({}, function(err, addr) {
           should.not.exist(err);
@@ -1372,7 +1372,7 @@ describe('client API', function() {
         10: 18000,
       });
       clients[0].credentials = {};
-      clients[0].getFeeLevels('BTC', function(err, levels) {
+      clients[0].getFeeLevels('btc', function(err, levels) {
         should.not.exist(err);
         should.exist(levels);
         lodash.difference(['priority', 'normal', 'economy'], lodash.map(levels, 'level')).should.be.empty;
@@ -1937,7 +1937,6 @@ describe('client API', function() {
       };
 
       var tamperings = [
-
         function(txp) {
           txp.feePerKb = 45600;
         },
@@ -1972,7 +1971,6 @@ describe('client API', function() {
 
       var tmp = clients[0]._getCreateTxProposalArgs;
       var args = clients[0]._getCreateTxProposalArgs(opts);
-
       clients[0]._getCreateTxProposalArgs = function(opts) {
         return args;
       };
@@ -2323,7 +2321,7 @@ describe('client API', function() {
     this.timeout(5000);
     function setup(m, n, network, cb) {
       helpers.createAndJoinWallet(clients, m, n, {
-        network: network,
+        networkName: network,
       }, function(w) {
         clients[0].createAddress(function(err, address) {
           should.not.exist(err);
@@ -2336,7 +2334,7 @@ describe('client API', function() {
     };
 
     beforeEach(function(done) {
-      setup(2, 3, 'TESTNET', done);
+      setup(2, 3, 'testnet', done);
     });
 
     it('Should sign proposal', function(done) {
@@ -2588,7 +2586,7 @@ describe('client API', function() {
                 amount.high.should.equal(0);
                 var s = refund_to.get('script');
                 s = new Script(s.buffer.slice(s.offset, s.limit));
-                var addr = new Address.fromScript(s, 'TESTNET');
+                var addr = new Address.fromScript(s, 'testnet');
                 addr.toString().should.equal(changeAddress);
                 done();
               });
@@ -2682,7 +2680,7 @@ describe('client API', function() {
               amount.high.should.equal(0);
               var s = refund_to.get('script');
               s = new Script(s.buffer.slice(s.offset, s.limit));
-              var addr = new Address.fromScript(s, 'TESTNET');
+              var addr = new Address.fromScript(s, 'testnet');
               addr.toString().should.equal(changeAddress);
               done();
             });
@@ -3146,7 +3144,7 @@ describe('client API', function() {
     it('should broadcast raw tx', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         var opts = {
-          network: 'TESTNET',
+          networkName: 'testnet',
           rawTx: '0100000001b1b1b1b0d9786e237ec6a4b80049df9e926563fee7bdbc1ac3c4efc3d0af9a1c010000006a47304402207c612d36d0132ed463526a4b2370de60b0aa08e76b6f370067e7915c2c74179b02206ae8e3c6c84cee0bca8521704eddb40afe4590f14fd5d6434da980787ba3d5110121031be732b984b0f1f404840f2479bcc81f90187298efecc67dd83e1f93d9b2860dfeffffff0200ab9041000000001976a91403383bd4cff200de3690db1ed17d0b1a228ea43f88ac25ad6ed6190000001976a9147ccbaf7bcc1e323548bd1d57d7db03f6e6daf76a88acaec70700',
         };
         clients[0].broadcastRawTx(opts, function(err, txid) {
@@ -3577,7 +3575,7 @@ describe('client API', function() {
           var exported = clients[0].getMnemonic();
           importedClient = helpers.newClient(app);
           importedClient.importFromMnemonic(exported, {
-            network: c.network,
+            networkName: c.networkName,
           }, function(err) {
             var c2 = importedClient.credentials;
             c2.xPrivKey.should.equal(key);
@@ -3594,7 +3592,7 @@ describe('client API', function() {
           var walletId = c.walletId;
           var walletName = c.walletName;
           var copayerName = c.copayerName;
-          var network = c.network;
+          var network = c.networkName;
           var key = c.xPrivKey;
 
           var exported = clients[0].getMnemonic();
@@ -3614,7 +3612,7 @@ describe('client API', function() {
       describe('Non-compliant derivation', function() {
         function setup(done) {
           clients[0].createWallet('mywallet', 'creator', 1, 1, {
-            network: 'BTC'
+            networkName: 'btc'
           }, function(err) {
             should.not.exist(err);
             clients[0].createAddress(function(err, addr) {
@@ -3642,12 +3640,12 @@ describe('client API', function() {
 
         it('should check wallet service once if specific derivation is not problematic', function(done) {
           clients[0].seedFromMnemonic('relax about label gentle insect cross summer helmet come price elephant seek', {
-            network: 'BTC',
+            networkName: 'btc',
           });
           importedClient = helpers.newClient(app);
           var spy = sinon.spy(importedClient, 'openWallet');
           importedClient.importFromMnemonic(clients[0].getMnemonic(), {
-            network: 'BTC',
+            networkName: 'btc',
           }, function(err) {
             should.exist(err);
             err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
@@ -3659,12 +3657,12 @@ describe('client API', function() {
 
         it('should export & import with xprivkey + wallet service', function(done) {
           clients[0].seedFromMnemonic('relax about label gentle insect cross summer helmet come price elephant seek', {
-            network: 'BTC',
+            networkName: 'btc',
           });
           importedClient = helpers.newClient(app);
           var spy = sinon.spy(importedClient, 'openWallet');
           importedClient.importFromExtendedPrivateKey(clients[0].getKeys().xPrivKey, {
-            network: 'BTC',
+            networkName: 'btc',
           }, function(err) {
             should.exist(err);
             err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
@@ -3716,7 +3714,7 @@ describe('client API', function() {
         client.seedFromRandomWithMnemonic();
         var exported = client.getMnemonic();
         client.createWallet('mywallet', 'creator', 1, 1, {
-          network: 'BTC'
+          networkName: 'btc'
         }, function(err) {
           should.not.exist(err);
           var c = client.credentials;
@@ -3724,7 +3722,7 @@ describe('client API', function() {
           importedClient.importFromMnemonic(exported, {}, function(err) {
             should.not.exist(err);
             var c2 = importedClient.credentials;
-            c2.network.should.equal('BTC');
+            c2.networkName.should.equal('btc');
             c2.xPubKey.should.equal(client.credentials.xPubKey);
             c2.personalEncryptingKey.should.equal(c.personalEncryptingKey);
             c2.walletId.should.equal(c.walletId);
@@ -3740,7 +3738,7 @@ describe('client API', function() {
         var exported = 'bounce tonight little spy earn void nominee ankle walk ten type update';
         importedClient = helpers.newClient(app);
         importedClient.importFromMnemonic(exported, {
-          network: 'TESTNET',
+          networkName: 'testnet',
         }, function(err) {
           err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
           importedClient.mnemonicHasPassphrase().should.equal(false);
@@ -3753,7 +3751,7 @@ describe('client API', function() {
         var exported = 'bounce tonight little spy earn void nominee ankle walk ten type update';
         importedClient = helpers.newClient(app);
         importedClient.importFromMnemonic(exported, {
-          network: 'TESTNET',
+          networkName: 'testnet',
           passphrase: 'hola',
         }, function(err) {
           err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
@@ -4004,7 +4002,7 @@ describe('client API', function() {
           derivationStrategy: 'BIP48',
         });
         clients[0].createWallet('mywallet', 'creator', 1, 1, {
-          network: 'TESTNET'
+          networkName: 'testnet'
         }, function(err, secret) {
           should.not.exist(err);
 
@@ -4057,7 +4055,7 @@ describe('client API', function() {
     it('should create wallet in proxy from airgapped', function(done) {
       var airgapped = new WalletClient.API();
       airgapped.seedFromRandom({
-        network: 'TESTNET'
+        networkName: 'testnet'
       });
       var exported = airgapped.export({
         noSign: true
@@ -4069,7 +4067,7 @@ describe('client API', function() {
 
       var seedSpy = sinon.spy(proxy, 'seedFromRandom');
       proxy.createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET'
+        networkName: 'testnet'
       }, function(err) {
         should.not.exist(err);
         seedSpy.called.should.be.false;
@@ -4084,7 +4082,7 @@ describe('client API', function() {
     it('should fail to create wallet in proxy from airgapped when networks do not match', function(done) {
       var airgapped = new WalletClient.API();
       airgapped.seedFromRandom({
-        network: 'TESTNET'
+        networkName: 'testnet'
       });
       var exported = airgapped.export({
         noSign: true
@@ -4097,7 +4095,7 @@ describe('client API', function() {
       var seedSpy = sinon.spy(proxy, 'seedFromRandom');
       should.not.exist(proxy.credentials.xPrivKey);
       proxy.createWallet('mywallet', 'creator', 1, 1, {
-        network: 'BTC'
+        networkName: 'btc'
       }, function(err) {
         should.exist(err);
         err.message.should.equal('Existing keys were created for a different network');
@@ -4108,7 +4106,7 @@ describe('client API', function() {
     it('should be able to sign from airgapped client and broadcast from proxy', function(done) {
       var airgapped = new WalletClient.API();
       airgapped.seedFromRandom({
-        network: 'TESTNET'
+        networkName: 'testnet'
       });
       var exported = airgapped.export({
         noSign: true
@@ -4122,7 +4120,7 @@ describe('client API', function() {
 
           function(next) {
             proxy.createWallet('mywallet', 'creator', 1, 1, {
-              network: 'TESTNET'
+              networkName: 'testnet'
             }, function(err) {
               should.not.exist(err);
               proxy.createAddress(function(err, address) {
@@ -4187,7 +4185,7 @@ describe('client API', function() {
     it('should be able to sign from airgapped client with mnemonics (with unencrypted xpubkey ring)', function(done) {
       var client = helpers.newClient(app);
       client.seedFromRandomWithMnemonic({
-        network: 'TESTNET',
+        networkName: 'testnet',
         passphrase: 'passphrase',
       });
 
@@ -4199,7 +4197,7 @@ describe('client API', function() {
 
           function(next) {
             client.createWallet('mywallet', 'creator', 1, 1, {
-              network: 'TESTNET'
+              networkName: 'testnet'
             }, function(err) {
               should.not.exist(err);
               client.createAddress(function(err, address) {
@@ -4260,7 +4258,7 @@ describe('client API', function() {
       beforeEach(function(done) {
         airgapped = new WalletClient.API();
         airgapped.seedFromRandom({
-          network: 'TESTNET'
+          networkName: 'testnet'
         });
         var exported = airgapped.export({
           noSign: true
@@ -4274,7 +4272,7 @@ describe('client API', function() {
 
             function(next) {
               proxy.createWallet('mywallet', 'creator', 1, 1, {
-                network: 'TESTNET'
+                networkName: 'testnet'
               }, function(err) {
                 should.not.exist(err);
                 proxy.createAddress(function(err, address) {
@@ -4356,10 +4354,10 @@ describe('client API', function() {
     beforeEach(function(done) {
       c1 = clients[1];
       clients[1].seedFromRandomWithMnemonic({
-        network: 'TESTNET'
+        networkName: 'testnet'
       });
       clients[1].createWallet('mywallet', 'creator', 1, 1, {
-        network: 'TESTNET',
+        networkName: 'testnet',
       }, function() {
         clients[1].encryptPrivateKey(password);
         done();
@@ -4400,7 +4398,7 @@ describe('client API', function() {
     it('should prevent to encrypt airgapped\'s proxy credentials', function() {
       var airgapped = new WalletClient.API();
       airgapped.seedFromRandom({
-        network: 'TESTNET'
+        networkName: 'testnet'
       });
       var exported = airgapped.export({
         noSign: true
@@ -5047,7 +5045,7 @@ describe('client API', function() {
       var client = helpers.newClient(app);
       client.seedFromExtendedPublicKey('xpub661MyMwAqRbcGVyYUcHbZi9KNhN9Tdj8qHi9ZdoUXP1VeKiXDGGrE9tSoJKYhGFE2rimteYdwvoP6e87zS5LsgcEvsvdrpPBEmeWz9EeAUq', 'ledger', '1a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f001a1f00');
       client.createWallet('mywallet', 'creator', 1, 1, {
-        network: 'BTC'
+        networkName: 'btc'
       }, function(err) {
         should.not.exist(err);
         var c = client.credentials;

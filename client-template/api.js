@@ -1,6 +1,8 @@
 'use strict';
 
 var cLib = require('./cLib');
+var owsCommon = require('@owstack/ows-common');
+var Context = owsCommon.util.Context;
 
 var BaseWalletClient = require('../base-client');
 var BaseAPI = BaseWalletClient.API;
@@ -16,7 +18,7 @@ var Unit = cLib.Unit;
 var Utils = Common.Utils;
 var Verifier = require('./verifier');
 
-var context = {
+var context = new Context({
 	Address: Address,
 	Defaults: Defaults,
 	log: log,
@@ -26,7 +28,7 @@ var context = {
 	Unit: Unit,
 	Utils: Utils,
 	Verifier: Verifier
-};
+});
 
 class CAPI extends BaseAPI {
 	constructor(opts) {
