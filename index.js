@@ -2,8 +2,15 @@
 
 var Client = {};
 
-Client.BCH = require('./lib/bch-client');
-Client.BTC = require('./lib/btc-client');
-Client.LTC = require('./lib/ltc-client');
+Client.Credentials = require('@owstack/credentials-lib');
+Client.errors = require('./lib/base-client').errors;
+Client.KeyLib = require('@owstack/key-lib');
+Client.sjcl = require('sjcl');
+
+Client.networks = {
+	BCH: require('./lib/bch-client'),
+	BTC: require('./lib/btc-client'),
+	LTC: require('./lib/ltc-client')
+};
 
 module.exports = Client;

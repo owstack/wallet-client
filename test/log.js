@@ -5,7 +5,7 @@ var sinon = sinon || require('sinon');
 var should = chai.should();
 
 var Client = require('..');
-var WalletClient = Client.BTC;
+var WalletClient = Client.networks.BTC;
 
 var log = WalletClient.log;
 

@@ -5,7 +5,7 @@ var sinon = require('sinon');
 var should = chai.should();
 
 var Client = require('..');
-var WalletClient = Client.BTC;
+var WalletClient = Client.networks.BTC;
 
 var owsCommon = require('@owstack/ows-common');
 var keyLib = require('@owstack/key-lib');
