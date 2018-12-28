@@ -4,7 +4,7 @@ var Client = {};
 
 Client.Credentials = require('@owstack/credentials-lib');
 Client.errors = require('./lib/base-client').errors;
-Client.KeyLib = require('@owstack/key-lib');
+Client.keyLib = require('@owstack/key-lib');
 Client.sjcl = require('sjcl');
 
 Client.networks = {
