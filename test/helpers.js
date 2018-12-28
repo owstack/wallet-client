@@ -145,7 +145,6 @@ helpers.tamperResponse = function(clients, method, url, args, tamper, cb) {
   clients = [].concat(clients);
   // Use first client to get a clean response from server
   clients[0]._doRequest(method, url, args, false, function(err, result) {
-console.log(method, url, args);
     should.not.exist(err);
     tamper(result);
     // Return tampered data for every client in the list
