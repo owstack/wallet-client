@@ -7,7 +7,7 @@ var should = chai.should();
 var Client = require('..');
 var Service = require('@owstack/wallet-service');
 var serviceName = 'BTC';
-var WalletClient = Client.networks[serviceName];
+var WalletClient = Client.currencies[serviceName];
 
 var btcLib = require('@owstack/btc-lib');
 

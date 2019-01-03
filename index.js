@@ -7,7 +7,8 @@ Client.errors = require('./lib/base-client').errors;
 Client.keyLib = require('@owstack/key-lib');
 Client.sjcl = require('sjcl');
 
-Client.networks = {
+Client.currencies = {
+	// Currency names, see https://github.com/owstack/network-lib/blob/master/lib/networks.js (network.currency).
 	BCH: require('./lib/bch-client'),
 	BTC: require('./lib/btc-client'),
 	LTC: require('./lib/ltc-client')

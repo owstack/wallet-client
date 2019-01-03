@@ -8,7 +8,7 @@ var should = chai.should();
 var Client = require('..');
 var Service = require('@owstack/wallet-service');
 var serviceName = 'BTC';
-var WalletClient = Client.networks[serviceName];
+var WalletClient = Client.currencies[serviceName];
 var WalletService = Service[serviceName].WalletService;
 
 var btcLib = require('@owstack/btc-lib');
@@ -111,9 +111,9 @@ describe('client API', function() {
 
   describe('Client Internals', function() {
     it('should expose network clients', function() {
-      should.exist(Client.networks.BCH);
-      should.exist(Client.networks.BTC);
-      should.exist(Client.networks.LTC);
+      should.exist(Client.currencies.BCH);
+      should.exist(Client.currencies.BTC);
+      should.exist(Client.currencies.LTC);
     });
   });
 

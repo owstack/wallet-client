@@ -5,7 +5,7 @@ var sinon = require('sinon');
 var should = chai.should();
 
 var Client = require('..');
-var WalletClient = Client.networks.BTC;
+var WalletClient = Client.currencies.BTC;
 
 var owsCommon = require('@owstack/ows-common');
 var keyLib = require('@owstack/key-lib');
@@ -108,12 +108,12 @@ describe('Utils', function() {
         expected: '0.123457'
       }, {
         args: [12345611, 'BTC', {
-            includeUnits: false
+          includeUnits: false
         }],
         expected: '0.123456'
       }, {
         args: [1234, 'BTC', {
-            includeUnits: false
+          includeUnits: false
         }],
         expected: '0.000012'
       }, {

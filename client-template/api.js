@@ -15,6 +15,7 @@ var Networks = cLib.Networks;
 var PayPro = require('./paypro');
 var Transaction = cLib.Transaction;
 var Unit = cLib.Unit;
+var URI = cLib.URI;
 var Utils = Common.Utils;
 var Verifier = require('./verifier');
 
@@ -26,6 +27,7 @@ var context = new Context({
 	PayPro: PayPro,
 	Transaction: Transaction,
 	Unit: Unit,
+	URI: URI,
 	Utils: Utils,
 	Verifier: Verifier
 });
