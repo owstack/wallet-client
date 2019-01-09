@@ -41,7 +41,7 @@
     "superagent": "^3.4.1"
   },
   "devDependencies": {
-    "@owstack/wallet-service": "^0.0.15",
+    "@owstack/wallet-service": "^0.0.17",
     "browserify": "^13.1.0",
     "chai": "^1.9.1",
     "coveralls": "^2.11.2",
