@@ -8,7 +8,7 @@ cd wallet-client
 ```
 
 ### Install wallet-client from github source
-Use the following steps to Install wallet-service from github source and run it with defaults.
+Use the following steps to Install wallet-client from github source and run it with defaults.
 ```bash
 git clone https://github.com/owstack/wallet-client.git
 cd wallet-client

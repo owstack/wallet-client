@@ -45,7 +45,7 @@ describe('client API', function() {
   var i = 0;
   
   beforeEach(function(done) {
-    var storage = new Storage({
+    var storage = new Storage({}, {
       db: helpers.newDb()
     });
 
@@ -798,7 +798,7 @@ describe('client API', function() {
           clients[0]._fetchLatestNotifications(5, function() {
             notifications.length.should.equal(0);
             clock.tick(2000);
-            clients[1].createAddress(function(err, x) {
+            clients[1].createAddress({}, function(err, x) {
               should.not.exist(err);
               clients[0]._fetchLatestNotifications(5, function() {
                 lodash.map(notifications, 'type').should.deep.equal(['NewAddress']);
@@ -806,7 +806,7 @@ describe('client API', function() {
                 notifications = [];
                 clients[0]._fetchLatestNotifications(5, function() {
                   notifications.length.should.equal(0);
-                  clients[1].createAddress(function(err, x) {
+                  clients[1].createAddress({}, function(err, x) {
                     should.not.exist(err);
                     clock.tick(60 * 1000);
                     clients[0]._fetchLatestNotifications(5, function() {
@@ -1280,9 +1280,9 @@ describe('client API', function() {
   describe('#getMainAddresses', function() {
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             blockchainExplorerMock.setUtxo(x0, 1, 1);
             done();
@@ -1329,7 +1329,7 @@ describe('client API', function() {
       clients[0].getUtxos({}, function(err, utxos) {
         should.not.exist(err);
         utxos.length.should.equal(0);
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 1);
@@ -1344,7 +1344,7 @@ describe('client API', function() {
 
     it('Should return UTXOs for specific addresses', function(done) {
       async.map(lodash.range(3), function(i, next) {
-        clients[0].createAddress(function(err, x) {
+        clients[0].createAddress({}, function(err, x) {
           should.not.exist(err);
           should.exist(x.address);
           blockchainExplorerMock.setUtxo(x, 1, 1);
@@ -1497,7 +1497,7 @@ describe('client API', function() {
     var balance;
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
-        clients[0].createAddress(function(err, address) {
+        clients[0].createAddress({}, function(err, address) {
           should.not.exist(err);
           should.exist(address.address);
           blockchainExplorerMock.setUtxo(address, 2, 1, 1);
@@ -1594,7 +1594,7 @@ describe('client API', function() {
   describe('Address Creation', function() {
     it('should be able to create address in 1-of-1 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
-        clients[0].createAddress(function(err, x) {
+        clients[0].createAddress({}, function(err, x) {
           should.not.exist(err);
           should.exist(x.address);
           x.address.charAt(0).should.not.equal('2');
@@ -1606,7 +1606,7 @@ describe('client API', function() {
     it('should fail if key derivation is not ok', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0].keyDerivationOk = false;
-        clients[0].createAddress(function(err, address) {
+        clients[0].createAddress({}, function(err, address) {
           should.exist(err);
           should.not.exist(address);
           err.message.should.contain('new address');
@@ -1618,14 +1618,14 @@ describe('client API', function() {
     it('should be able to create address in all copayers in a 2-3 wallet', function(done) {
       this.timeout(5000);
       helpers.createAndJoinWallet(clients, 2, 3, function() {
-        clients[0].createAddress(function(err, x) {
+        clients[0].createAddress({}, function(err, x) {
           should.not.exist(err);
           should.exist(x.address);
           x.address.charAt(0).should.equal('2');
-          clients[1].createAddress(function(err, x) {
+          clients[1].createAddress({}, function(err, x) {
             should.not.exist(err);
             should.exist(x.address);
-            clients[2].createAddress(function(err, x) {
+            clients[2].createAddress({}, function(err, x) {
               should.not.exist(err);
               should.exist(x.address);
               done();
@@ -1638,7 +1638,7 @@ describe('client API', function() {
     it('should see balance on address created by others', function(done) {
       this.timeout(5000);
       helpers.createAndJoinWallet(clients, 2, 2, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
 
@@ -1662,7 +1662,7 @@ describe('client API', function() {
         helpers.tamperResponse(clients[0], 'post', '/v1/addresses/', {}, function(address) {
           address.address = '2N86pNEpREGpwZyHVC5vrNUCbF9nM1Geh4K';
         }, function() {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             err.should.be.an.instanceOf(Errors.SERVER_COMPROMISED);
             done();
           });
@@ -1678,7 +1678,7 @@ describe('client API', function() {
             '02bf3aadc17131ca8144829fa1883c1ac0a8839067af4bca47a90ccae63d0d8037'
           ];
         }, function() {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             err.should.be.an.instanceOf(Errors.SERVER_COMPROMISED);
             done();
           });
@@ -1721,10 +1721,10 @@ describe('client API', function() {
       clock = sinon.useFakeTimers(1234000, 'Date');
       helpers.createAndJoinWallet(clients, 2, 2, function() {
         clock.tick(25 * 1000);
-        clients[0].createAddress(function(err, x) {
+        clients[0].createAddress({}, function(err, x) {
           should.not.exist(err);
           clock.tick(25 * 1000);
-          clients[1].createAddress(function(err, x) {
+          clients[1].createAddress({}, function(err, x) {
             should.not.exist(err);
             done();
           });
@@ -1780,7 +1780,7 @@ describe('client API', function() {
     var myAddress;
     beforeEach(function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-        clients[0].createAddress(function(err, address) {
+        clients[0].createAddress({}, function(err, address) {
           should.not.exist(err);
           myAddress = address;
           blockchainExplorerMock.setUtxo(address, 2, 2);
@@ -2097,7 +2097,7 @@ describe('client API', function() {
 
     it('Should fail to create proposal with insufficient funds', function(done) {
       helpers.createAndJoinWallet(clients, 2, 2, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 2);
@@ -2248,7 +2248,7 @@ describe('client API', function() {
     describe('Detecting tampered tx proposals', function() {
       it('should detect wrong signature', function(done) {
         helpers.createAndJoinWallet(clients, 1, 1, function() {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             blockchainExplorerMock.setUtxo(x0, 10, 1);
             var opts = {
@@ -2323,7 +2323,7 @@ describe('client API', function() {
       helpers.createAndJoinWallet(clients, m, n, {
         networkName: network,
       }, function(w) {
-        clients[0].createAddress(function(err, address) {
+        clients[0].createAddress({}, function(err, address) {
           should.not.exist(err);
           blockchainExplorerMock.setUtxo(address, 2, 2);
           blockchainExplorerMock.setUtxo(address, 2, 2);
@@ -2456,7 +2456,7 @@ describe('client API', function() {
         http = sinon.stub();
         http.yields(null, TestData.payProBuf);
         helpers.createAndJoinWallet(clients, 2, 2, function(w) {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             should.exist(x0.address);
             blockchainExplorerMock.setUtxo(x0, 1, 2);
@@ -2630,7 +2630,7 @@ describe('client API', function() {
         http = sinon.stub();
         http.yields(null, TestData.payProBuf);
         helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             should.exist(x0.address);
             blockchainExplorerMock.setUtxo(x0, 1, 2);
@@ -2719,7 +2719,7 @@ describe('client API', function() {
         http = sinon.stub();
         http.yields(null, TestData.payProBuf);
         helpers.createAndJoinWallet(clients, 2, 2, function(w) {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             should.exist(x0.address);
             blockchainExplorerMock.setUtxo(x0, 1, 2);
@@ -2771,7 +2771,7 @@ describe('client API', function() {
     it('Should create and publish a proposal', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
         var id = 'anId';
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 2);
@@ -2824,7 +2824,7 @@ describe('client API', function() {
       var http = sinon.stub();
       http.yields(null, TestData.payProBuf);
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 1);
@@ -2893,7 +2893,7 @@ describe('client API', function() {
     this.timeout(5000);
     it('Send and broadcast in 1-1 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 1);
@@ -2935,7 +2935,7 @@ describe('client API', function() {
 
     it('should sign if signatures are empty', function(done) {
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 1, 1);
@@ -2964,7 +2964,7 @@ describe('client API', function() {
 
     it('Send and broadcast in 2-3 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 10, 2);
@@ -3008,7 +3008,7 @@ describe('client API', function() {
 
     it('Send, reject actions in 2-3 wallet must have correct copayerNames', function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           blockchainExplorerMock.setUtxo(x0, 10, 2);
           var opts = {
@@ -3032,7 +3032,7 @@ describe('client API', function() {
 
     it('Send, reject, 2 signs and broadcast in 2-3 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 10, 2);
@@ -3069,7 +3069,7 @@ describe('client API', function() {
 
     it('Send, reject in 3-4 wallet', function(done) {
       helpers.createAndJoinWallet(clients, 3, 4, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 10, 3);
@@ -3104,7 +3104,7 @@ describe('client API', function() {
 
     it('Should not allow to reject or sign twice', function(done) {
       helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           blockchainExplorerMock.setUtxo(x0, 10, 2);
@@ -3160,7 +3160,7 @@ describe('client API', function() {
     it('should get transaction history', function(done) {
       blockchainExplorerMock.setHistory(TestData.history);
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           clients[0].getTxHistory({}, function(err, txs) {
@@ -3191,7 +3191,7 @@ describe('client API', function() {
 
         function(next) {
           helpers.createAndJoinWallet(clients, 2, 3, function(w) {
-            clients[0].createAddress(function(err, address) {
+            clients[0].createAddress({}, function(err, address) {
               should.not.exist(err);
               should.exist(address);
               next(null, address);
@@ -3298,7 +3298,7 @@ describe('client API', function() {
 
       blockchainExplorerMock.setHistory(TestData.history);
       helpers.createAndJoinWallet(clients, 1, 1, function(w) {
-        clients[0].createAddress(function(err, x0) {
+        clients[0].createAddress({}, function(err, x0) {
           should.not.exist(err);
           should.exist(x0.address);
           async.each(testCases, function(testCase, next) {
@@ -3482,7 +3482,7 @@ describe('client API', function() {
         beforeEach(function(done) {
           importedClient = null;
           helpers.createAndJoinWallet(clients, 1, 1, function() {
-            clients[0].createAddress(function(err, addr) {
+            clients[0].createAddress({}, function(err, addr) {
               should.not.exist(err);
               should.exist(addr.address);
               address = addr.address;
@@ -3597,7 +3597,7 @@ describe('client API', function() {
 
           var exported = clients[0].getMnemonic();
           importedClient = helpers.newClient(app);
-          importedClient.importFromExtendedPrivateKey(key, function(err) {
+          importedClient.importFromExtendedPrivateKey(key, {}, function(err) {
             var c2 = importedClient.credentials;
             c2.xPrivKey.should.equal(key);
             should.not.exist(err);
@@ -3615,7 +3615,7 @@ describe('client API', function() {
             networkName: 'btc'
           }, function(err) {
             should.not.exist(err);
-            clients[0].createAddress(function(err, addr) {
+            clients[0].createAddress({}, function(err, addr) {
               should.not.exist(err);
               address = addr.address;
               done();
@@ -3769,7 +3769,7 @@ describe('client API', function() {
           var walletName = clients[0].credentials.walletName;
           var copayerName = clients[0].credentials.copayerName;
 
-          clients[0].createAddress(function(err, addr) {
+          clients[0].createAddress({}, function(err, addr) {
             should.not.exist(err);
             should.exist(addr);
 
@@ -3794,7 +3794,7 @@ describe('client API', function() {
         helpers.createAndJoinWallet(clients, 1, 1, function() {
           var xpriv = clients[0].credentials.xPrivKey;
           var walletName = clients[0].credentials.walletName;
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             should.exist(x0.address);
             blockchainExplorerMock.setUtxo(x0, 1, 1, 0);
@@ -3823,11 +3823,11 @@ describe('client API', function() {
 
       it('should be able to recreate wallet 2-2', function(done) {
         helpers.createAndJoinWallet(clients, 2, 2, function() {
-          clients[0].createAddress(function(err, addr) {
+          clients[0].createAddress({}, function(err, addr) {
             should.not.exist(err);
             should.exist(addr);
 
-            var storage = new Storage({
+            var storage = new Storage({}, {
               db: helpers.newDb(),
             });
 
@@ -3865,7 +3865,7 @@ describe('client API', function() {
                     should.not.exist(err);
                     status.wallet.name.should.equal('mywallet');
                     lodash.difference(lodash.map(status.wallet.copayers, 'name'), ['creator', 'copayer 1']).length.should.equal(0);
-                    recoveryClient.createAddress(function(err, addr2) {
+                    recoveryClient.createAddress({}, function(err, addr2) {
                       should.not.exist(err);
                       should.exist(addr2);
                       addr2.address.should.equal(addr.address);
@@ -3889,12 +3889,12 @@ describe('client API', function() {
       it('should be able to recover funds from recreated wallet', function(done) {
         this.timeout(10000);
         helpers.createAndJoinWallet(clients, 2, 2, function() {
-          clients[0].createAddress(function(err, addr) {
+          clients[0].createAddress({}, function(err, addr) {
             should.not.exist(err);
             should.exist(addr);
             blockchainExplorerMock.setUtxo(addr, 1, 2);
 
-            var storage = new Storage({
+            var storage = new Storage({}, {
               db: helpers.newDb(),
             });
             var newApp;
@@ -3944,11 +3944,11 @@ describe('client API', function() {
 
       it('should be able call recreate wallet twice', function(done) {
         helpers.createAndJoinWallet(clients, 2, 2, function() {
-          clients[0].createAddress(function(err, addr) {
+          clients[0].createAddress({}, function(err, addr) {
             should.not.exist(err);
             should.exist(addr);
 
-            var storage = new Storage({
+            var storage = new Storage({}, {
               db: helpers.newDb(),
             });
             var newApp;
@@ -3974,7 +3974,7 @@ describe('client API', function() {
                       recoveryClient.getStatus({}, function(err, status) {
                         should.not.exist(err);
                         lodash.difference(lodash.map(status.wallet.copayers, 'name'), ['creator', 'copayer 1']).length.should.equal(0);
-                        recoveryClient.createAddress(function(err, addr2) {
+                        recoveryClient.createAddress({}, function(err, addr2) {
                           should.not.exist(err);
                           should.exist(addr2);
                           addr2.address.should.equal(addr.address);
@@ -4006,11 +4006,11 @@ describe('client API', function() {
         }, function(err, secret) {
           should.not.exist(err);
 
-          clients[0].createAddress(function(err, addr) {
+          clients[0].createAddress({}, function(err, addr) {
             should.not.exist(err);
             should.exist(addr);
 
-            var storage = new Storage({
+            var storage = new Storage({}, {
               db: helpers.newDb(),
             });
 
@@ -4034,7 +4034,7 @@ describe('client API', function() {
                   should.not.exist(err);
                   recoveryClient.getStatus({}, function(err, status) {
                     should.not.exist(err);
-                    recoveryClient.createAddress(function(err, addr2) {
+                    recoveryClient.createAddress({}, function(err, addr2) {
                       should.not.exist(err);
                       should.exist(addr2);
                       addr2.address.should.equal(addr.address);
@@ -4123,7 +4123,7 @@ describe('client API', function() {
               networkName: 'testnet'
             }, function(err) {
               should.not.exist(err);
-              proxy.createAddress(function(err, address) {
+              proxy.createAddress({}, function(err, address) {
                 should.not.exist(err);
                 should.exist(address.address);
                 blockchainExplorerMock.setUtxo(address, 1, 1);
@@ -4200,7 +4200,7 @@ describe('client API', function() {
               networkName: 'testnet'
             }, function(err) {
               should.not.exist(err);
-              client.createAddress(function(err, address) {
+              client.createAddress({}, function(err, address) {
                 should.not.exist(err);
                 should.exist(address.address);
                 blockchainExplorerMock.setUtxo(address, 1, 1);
@@ -4275,7 +4275,7 @@ describe('client API', function() {
                 networkName: 'testnet'
               }, function(err) {
                 should.not.exist(err);
-                proxy.createAddress(function(err, address) {
+                proxy.createAddress({}, function(err, address) {
                   should.not.exist(err);
                   should.exist(address.address);
                   blockchainExplorerMock.setUtxo(address, 1, 1);
@@ -4465,7 +4465,7 @@ describe('client API', function() {
     });
 
     it('should fail to sign when encrypted and no password is provided', function(done) {
-      c1.createAddress(function(err, x0) {
+      c1.createAddress({}, function(err, x0) {
         should.not.exist(err);
         blockchainExplorerMock.setUtxo(x0, 1, 1);
         var opts = {
@@ -4484,7 +4484,7 @@ describe('client API', function() {
     });
 
     it('should sign when encrypted and password provided', function(done) {
-      c1.createAddress(function(err, x0) {
+      c1.createAddress({}, function(err, x0) {
         should.not.exist(err);
         blockchainExplorerMock.setUtxo(x0, 1, 1);
         var opts = {
@@ -4504,7 +4504,7 @@ describe('client API', function() {
     });
 
     it('should fail to sign when encrypted and incorrect password', function(done) {
-      c1.createAddress(function(err, x0) {
+      c1.createAddress({}, function(err, x0) {
         should.not.exist(err);
         blockchainExplorerMock.setUtxo(x0, 1, 1);
         var opts = {
@@ -4535,7 +4535,7 @@ describe('client API', function() {
         };
 
         helpers.createAndJoinWallet(clients, 1, 1, function() {
-          clients[0].createAddress(function(err, x0) {
+          clients[0].createAddress({}, function(err, x0) {
             should.not.exist(err);
             blockchainExplorerMock.setUtxo(x0, 10, 1);
             var c = clients[0].credentials;
@@ -5021,7 +5021,7 @@ describe('client API', function() {
       it('should handle importing an invalid extended private key', function(done) {
         var client = new WalletClient.API();
         var xPrivKey = 'this is an invalid key';
-        client.importFromExtendedPrivateKey(xPrivKey, function(err) {
+        client.importFromExtendedPrivateKey(xPrivKey, {}, function(err) {
           should.exist(err);
           err.should.be.an.instanceOf(Errors.INVALID_BACKUP);
           done();
@@ -5113,16 +5113,16 @@ describe('client API', function() {
     });
 
     it('should always return same address', function(done) {
-      clients[0].createAddress(function(err, x) {
+      clients[0].createAddress({}, function(err, x) {
         should.not.exist(err);
         should.exist(x);
         x.path.should.equal('m/0/0');
-        clients[0].createAddress(function(err, y) {
+        clients[0].createAddress({}, function(err, y) {
           should.not.exist(err);
           should.exist(y);
           y.path.should.equal('m/0/0');
           y.address.should.equal(x.address);
-          clients[1].createAddress(function(err, z) {
+          clients[1].createAddress({}, function(err, z) {
             should.not.exist(err);
             should.exist(z);
             z.path.should.equal('m/0/0');
@@ -5138,7 +5138,7 @@ describe('client API', function() {
     });
 
     it('should reuse address as change address on tx proposal creation', function(done) {
-      clients[0].createAddress(function(err, address) {
+      clients[0].createAddress({}, function(err, address) {
         should.not.exist(err);
         should.exist(address.address);
         blockchainExplorerMock.setUtxo(address, 2, 1);

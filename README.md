@@ -9,7 +9,7 @@ The client library for the [wallet-service](https://github.com/owstack/wallet-se
 
 ## Description
 
-This package communicates with multipe wallet services using the REST API. All REST endpoints are wrapped as simple async methods. All relevant responses from wallet services are checked independently by the peers, thus the importance of using this library when talking to a third party wallet service instances.
+This package communicates with multiple wallet services using the REST API. All REST endpoints are wrapped as simple async methods. All relevant responses from wallet services are checked independently by the peers, thus the importance of using this library when talking to a third party wallet service instances.
 
 ## Get Started
 
@@ -829,11 +829,11 @@ A simple logger that wraps the <tt>console.log</tt> methods when available.
 
 Usage:
 <pre>
-  log = new Logger('copay');
+  log = new Logger('ows');
   log.setLevel('info');
   log.debug('Message!'); // won't show
   log.setLevel('debug');
-  log.debug('Message!', 1); // will show '[debug] copay: Message!, 1'
+  log.debug('Message!', 1); // will show '[debug] ows: Message!, 1'
 </pre>
 
 ### Logger.setLevel(level)
