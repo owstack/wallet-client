@@ -108,7 +108,7 @@ helpers.createAndJoinWallet = function(clients, m, n, opts, cb) {
   clients[0].createWallet('mywallet', 'creator', m, n, {
     networkName: opts.network || 'testnet',
     singleAddress: !!opts.singleAddress,
-  }, function(err, secret) {    
+  }, function(err, secret) {
     should.not.exist(err);
 
     if (n > 1) {

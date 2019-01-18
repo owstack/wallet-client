@@ -1,7 +1,7 @@
 {
   "name": "@owstack/wallet-client",
   "description": "A Javascript cryptocurrency wallet library.",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "keywords": [
     "bitcoin",
@@ -24,14 +24,14 @@
     "url": "https://github.com/owstack/wallet-client/issues"
   },
   "dependencies": {
-    "@owstack/ows-common": "^0.0.16",
-    "@owstack/credentials-lib": "^0.0.22",
-    "@owstack/key-lib": "^0.0.33",
-    "@owstack/mnemonic-lib": "^0.0.23",
-    "@owstack/payment-protocol-lib": "^0.0.15",
-    "@owstack/btc-lib": "^0.1.13",
     "@owstack/bch-lib": "^0.3.12",
+    "@owstack/btc-lib": "^0.1.13",
+    "@owstack/credentials-lib": "0.0.24",
+    "@owstack/key-lib": "^0.0.33",
     "@owstack/ltc-lib": "^0.1.12",
+    "@owstack/mnemonic-lib": "^0.0.23",
+    "@owstack/ows-common": "^0.0.16",
+    "@owstack/payment-protocol-lib": "^0.0.15",
     "async": "^0.9.0",
     "bip38": "^1.3.0",
     "inherits": "^2.0.1",

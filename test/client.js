@@ -744,12 +744,12 @@ describe('client API', function() {
       while (i++ < 100) {
         var walletId = Uuid.v4();
         var networkName = i % 2 == 0 ? 'testnet' : 'btc';
-        var walletPrivKey = new PrivateKey(null, networkName);
+        var privKey = new PrivateKey(null, networkName);
         var client = new WalletClient.API();
-        var secret = client._buildSecret(walletId, walletPrivKey, networkName);
+        var secret = client._buildSecret(walletId, privKey, networkName);
         var result = client.parseSecret(secret);
         result.walletId.should.equal(walletId);
-        result.walletPrivKey.toString().should.equal(walletPrivKey.toString());
+        result.privKey.toString().should.equal(privKey.toString());
         result.networkName.should.equal(networkName);
       };
     });
@@ -764,11 +764,11 @@ describe('client API', function() {
       var client = new WalletClient.API();
       var walletId = Uuid.v4();
       var networkName = 'testnet';
-      var walletPrivKey = new PrivateKey(null, networkName);
-      var secret = client._buildSecret(walletId, walletPrivKey.toString(), networkName);
+      var privKey = new PrivateKey(null, networkName);
+      var secret = client._buildSecret(walletId, privKey.toString(), networkName);
       var result = client.parseSecret(secret);
       result.walletId.should.equal(walletId);
-      result.walletPrivKey.toString().should.equal(walletPrivKey.toString());
+      result.privKey.toString().should.equal(privKey.toString());
       result.networkName.should.equal(networkName);
     });
   });
@@ -870,12 +870,12 @@ describe('client API', function() {
 
     it('should be able to access wallet name in non-encrypted wallet (legacy)', function(done) {
       clients[0].seedFromRandomWithMnemonic();
-      var wpk = new PrivateKey();
+      var pk = new PrivateKey();
       var args = {
         name: 'mywallet',
         m: 1,
         n: 1,
-        pubKey: wpk.toPublicKey().toString(),
+        pubKey: pk.toPublicKey().toString(),
         networkName: 'btc',
         id: '123',
       };
@@ -889,11 +889,11 @@ describe('client API', function() {
           xPubKey: c.xPubKey,
           requestPubKey: c.requestPubKey,
           customData: Utils.encryptMessage(JSON.stringify({
-            walletPrivKey: wpk.toString(),
+            privKey: pk.toString(),
           }), c.personalEncryptingKey),
         };
         var hash = Utils.getCopayerHash(args.name, args.xPubKey, args.requestPubKey);
-        args.copayerSignature = Utils.signMessage(hash, wpk);
+        args.copayerSignature = Utils.signMessage(hash, pk);
         clients[0]._doPostRequest('/v1/wallets/123/copayers', args, function(err, wallet) {
           should.not.exist(err);
           clients[0].openWallet(function(err) {
@@ -945,7 +945,6 @@ describe('client API', function() {
         wallet.name.should.equal('mywallet');
         wallet.status.should.equal('complete');
         clients[0].isComplete().should.equal(true);
-        clients[0].credentials.isComplete().should.equal(true);
         if (++checks == 2) done();
       });
       clients[0].createWallet('mywallet', 'creator', 2, 2, {
@@ -953,7 +952,6 @@ describe('client API', function() {
       }, function(err, secret) {
         should.not.exist(err);
         clients[0].isComplete().should.equal(false);
-        clients[0].credentials.isComplete().should.equal(false);
         clients[1].joinWallet(secret, 'guest', {}, function(err, wallet) {
           should.not.exist(err);
           wallet.name.should.equal('mywallet');
@@ -1086,7 +1084,7 @@ describe('client API', function() {
           // Add a correct signature
           status.wallet.copayers[1].xPubKeySignature = Utils.signMessage(
             status.wallet.copayers[1].xPubKey.toString(),
-            clients[0].credentials.walletPrivKey
+            clients[0].credentials.privKey
           );
         }, function() {
           openWalletStub.restore();
@@ -1162,12 +1160,12 @@ describe('client API', function() {
       });
     });
 
-    it('should store walletPrivKey', function(done) {
+    it('should store wallet privKey', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
         networkName: 'testnet'
       }, function(err) {
 
-        var key = clients[0].credentials.walletPrivKey;
+        var key = clients[0].credentials.privKey;
         should.not.exist(err);
         clients[0].getStatus({
           includeExtendedInfo: true
@@ -1175,28 +1173,28 @@ describe('client API', function() {
           should.not.exist(err);
           status.wallet.publicKeyRing.length.should.equal(1);
           status.wallet.status.should.equal('complete');
-          var key2 = status.customData.walletPrivKey;
+          var key2 = status.customData.privKey;
           key2.should.be.equal(key2);
           done();
         });
       });
     });
 
-    it('should set walletPrivKey from wallet service', function(done) {
+    it('should set wallet privKey from wallet service', function(done) {
       clients[0].createWallet('mywallet', 'creator', 1, 1, {
         networkName: 'testnet'
       }, function(err) {
 
-        var wkey = clients[0].credentials.walletPrivKey;
+        var pkey = clients[0].credentials.privKey;
         var skey = clients[0].credentials.sharedEncryptingKey;
-        delete clients[0].credentials.walletPrivKey;
+        delete clients[0].credentials.privKey;
         delete clients[0].credentials.sharedEncryptingKey;
         should.not.exist(err);
         clients[0].getStatus({
           includeExtendedInfo: true
         }, function(err, status) {
           should.not.exist(err);
-          clients[0].credentials.walletPrivKey.should.equal(wkey);
+          clients[0].credentials.privKey.should.equal(pkey);
           clients[0].credentials.sharedEncryptingKey.should.equal(skey);
           done();
         });
