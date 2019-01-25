@@ -1,7 +1,7 @@
 {
   "name": "@owstack/wallet-client",
   "description": "A Javascript cryptocurrency wallet library.",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "license": "MIT",
   "keywords": [
     "bitcoin",

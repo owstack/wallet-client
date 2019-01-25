@@ -146,7 +146,7 @@ describe('client API', function() {
         },
         function(err) {
           err.should.be.an.instanceOf(Error);
-          err.message.should.equal('bigerror');
+          err.message.should.include('bigerror');
           done();
         });
       });
@@ -173,7 +173,7 @@ describe('client API', function() {
           },
           function(err) {
             err.should.be.an.instanceOf(Error);
-            err.message.should.equal('wow');
+            err.message.should.include('wow');
             done();
           });
       });
