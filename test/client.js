@@ -3646,7 +3646,7 @@ describe('client API', function() {
             networkName: 'btc',
           }, function(err) {
             should.exist(err);
-            err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+            err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
             spy.getCalls().length.should.equal(1);
             importedClient = null;
             done();
@@ -3663,7 +3663,7 @@ describe('client API', function() {
             networkName: 'btc',
           }, function(err) {
             should.exist(err);
-            err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+            err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
             spy.getCalls().length.should.equal(1);
             importedClient = null;
             done();
@@ -3738,7 +3738,7 @@ describe('client API', function() {
         importedClient.importFromMnemonic(exported, {
           networkName: 'testnet',
         }, function(err) {
-          err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+          err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
           importedClient.mnemonicHasPassphrase().should.equal(false);
           importedClient.credentials.xPrivKey.should.equal('tprv8ZgxMBicQKsPdTYGTn3cPvTJJuuKHCYbfH1fbu4ceZ5tzYrcjYMKY1JfZiEFDDpEXWquSpX6jRsEoVPoaSw82tQ1Wn1U3K1bQDZBj3UGuEG');
           done();
@@ -3752,7 +3752,7 @@ describe('client API', function() {
           networkName: 'testnet',
           passphrase: 'hola',
         }, function(err) {
-          err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+          err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
           importedClient.mnemonicHasPassphrase().should.equal(true);
           importedClient.credentials.xPrivKey.should.equal('tprv8ZgxMBicQKsPdVijVxEu7gVDi86PUZqbCe7xTGLwVXwZpsG3HuxLDjXL3DXRSaaNymMD7gRpXimxnUDYa5N7pLTKLQymdSotrb4co7Nwrs7');
           done();
@@ -3843,7 +3843,7 @@ describe('client API', function() {
 
               recoveryClient.getStatus({}, function(err, status) {
                 should.exist(err);
-                err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+                err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
                 var spy = sinon.spy(recoveryClient, '_doPostRequest');
                 recoveryClient.recreateWallet(function(err) {
                   should.not.exist(err);
@@ -3909,7 +3909,7 @@ describe('client API', function() {
 
                 recoveryClient.getStatus({}, function(err, status) {
                   should.exist(err);
-                  err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+                  err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
                   recoveryClient.recreateWallet(function(err) {
                     should.not.exist(err);
                     recoveryClient.getStatus({}, function(err, status) {
@@ -3964,7 +3964,7 @@ describe('client API', function() {
 
                 recoveryClient.getStatus({}, function(err, status) {
                   should.exist(err);
-                  err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+                  err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
                   recoveryClient.recreateWallet(function(err) {
                     should.not.exist(err);
                     recoveryClient.recreateWallet(function(err) {
@@ -4027,7 +4027,7 @@ describe('client API', function() {
               recoveryClient.credentials.account.should.equal(2);
               recoveryClient.getStatus({}, function(err, status) {
                 should.exist(err);
-                err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+                err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
                 recoveryClient.recreateWallet(function(err) {
                   should.not.exist(err);
                   recoveryClient.getStatus({}, function(err, status) {
@@ -4549,7 +4549,7 @@ describe('client API', function() {
 
       it('should deny access before registering it ', function(done) {
         helpers.createAndPublishTxProposal(clients[0], opts, function(err, x) {
-          err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+          err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
           done();
         });
       });
@@ -4601,7 +4601,7 @@ describe('client API', function() {
           generateNewKey: true
         }, function(err, x) {
           helpers.createAndPublishTxProposal(clients[0], opts, function(err, x) {
-            err.should.be.an.instanceOf(Errors.NOT_AUTHORIZED);
+            err.should.be.an.instanceOf(Errors.UNAUTHORIZED);
             done();
           });
         });
@@ -4943,14 +4943,14 @@ describe('client API', function() {
       done();
     });
 
-    it('should handle NOT_AUTHORIZED error from _fetLatestNotifications', function(done) {
+    it('should handle UNAUTHORIZED error from _fetLatestNotifications', function(done) {
       var sandbox = sinon.sandbox.create();
       var clock = sandbox.useFakeTimers();
 
       var client = new WalletClient.API();
 
       var _f = sandbox.stub(client, '_fetchLatestNotifications', function(interval, cb) {
-        cb(new Errors.NOT_AUTHORIZED);
+        cb(new Errors.UNAUTHORIZED);
       });
 
       client._initNotifications({
