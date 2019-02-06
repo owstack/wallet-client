@@ -1,7 +1,7 @@
 {
   "name": "@owstack/wallet-client",
   "description": "A Javascript cryptocurrency wallet library.",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "license": "MIT",
   "keywords": [
     "bitcoin",
@@ -24,14 +24,14 @@
     "url": "https://github.com/owstack/wallet-client/issues"
   },
   "dependencies": {
-    "@owstack/bch-lib": "^0.3.13",
-    "@owstack/btc-lib": "^0.1.14",
-    "@owstack/credentials-lib": "0.0.31",
-    "@owstack/key-lib": "^0.0.33",
-    "@owstack/ltc-lib": "^0.1.13",
-    "@owstack/mnemonic-lib": "^0.0.23",
+    "@owstack/bch-lib": "^0.3.15",
+    "@owstack/btc-lib": "^0.1.17",
+    "@owstack/credentials-lib": "0.0.34",
+    "@owstack/key-lib": "^0.0.36",
+    "@owstack/ltc-lib": "^0.1.15",
+    "@owstack/mnemonic-lib": "^0.0.26",
     "@owstack/ows-common": "^0.0.16",
-    "@owstack/payment-protocol-lib": "^0.0.15",
+    "@owstack/payment-protocol-lib": "^0.0.18",
     "async": "^0.9.0",
     "bip38": "^1.3.0",
     "inherits": "^2.0.1",
@@ -41,7 +41,7 @@
     "superagent": "^3.4.1"
   },
   "devDependencies": {
-    "@owstack/wallet-service": "^0.0.23",
+    "@owstack/wallet-service": "^0.0.24",
     "browserify": "^13.1.0",
     "chai": "^1.9.1",
     "coveralls": "^2.11.2",
