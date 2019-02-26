@@ -1424,6 +1424,7 @@ describe('client API', function() {
       var now = Date.now();
       helpers.createAndJoinWallet(clients, 1, 1, function() {
         clients[0].getFiatRate({
+          currency: 'BTC',
           code: 'USD',
           ts: now,
         }, function(err, res) {
