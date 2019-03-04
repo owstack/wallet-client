@@ -5,7 +5,7 @@ var owsCommon = require('@owstack/ows-common');
 var Context = owsCommon.util.Context;
 
 var BaseWalletClient = require('../../base-client');
-var BaseUtils = BaseWalletClient.Common.Utils;
+var BaseUtils = BaseWalletClient.Utils;
 
 var Unit = cLib.Unit;
 

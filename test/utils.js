@@ -12,7 +12,7 @@ var keyLib = require('@owstack/key-lib');
 var HDPrivateKey = keyLib.HDPrivateKey;
 var HDPublicKey = keyLib.HDPublicKey;
 var PrivateKey = keyLib.PrivateKey;
-var Utils = WalletClient.Common.Utils;
+var Utils = WalletClient.Utils;
 var lodash = owsCommon.deps.lodash;
 
 describe('Utils', function() {

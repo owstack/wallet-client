@@ -36,7 +36,7 @@ var testConfig = require('./testConfig');
 var TestData = require('./testdata');
 var Transaction = btcLib.Transaction;
 var Uuid = require('uuid');
-var Utils = WalletClient.Common.Utils;
+var Utils = WalletClient.Utils;
 var lodash = owsCommon.deps.lodash;
 var $ = require('preconditions').singleton();
 

@@ -6,9 +6,8 @@ var Context = owsCommon.util.Context;
 var BaseWalletClient = require('../base-client');
 var BaseVerifier = BaseWalletClient.Verifier;
 
-var Common = require('./common');
 var log = require('./log');
-var Utils = Common.Utils;
+var Utils = require('./common/utils');
 
 var context = new Context({
 	log: log,
