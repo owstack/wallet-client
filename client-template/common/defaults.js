@@ -1,7 +1,7 @@
 'use strict';
 
 var BaseWalletClient = require('../../base-client');
-var Defaults = BaseWalletClient.Common.Defaults;
+var Defaults = BaseWalletClient.Defaults;
 
 Defaults.DEFAULT_FEE_PER_KB = 10000;
 Defaults.MIN_FEE_PER_KB = 0;
