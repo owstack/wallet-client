@@ -1,7 +1,7 @@
 # Generated service libraries
-lib/bch-client
-lib/btc-client
-lib/ltc-client
+bch-client
+btc-client
+ltc-client
 
 # Logs
 logs
@@ -51,4 +51,3 @@ Session.vim
 .DS_Store
 .AppleDouble
 .LSOverride
-
