@@ -35,7 +35,7 @@ helpers.newClient = function(app) {
   $.checkArgument(app);
   return new WalletClient.API({
     baseUrl: '/ws/api',
-    request: request(app),
+    request: request(app)
   });
 };
 

@@ -27,7 +27,6 @@ var HDPrivateKey = keyLib.HDPrivateKey;
 var HDPublicKey = keyLib.HDPublicKey;
 var helpers = require('./helpers');
 var ImportData = require('./legacyImportData.js');
-var log = WalletClient.log;
 var PayPro = require('@owstack/payment-protocol-lib');
 var PrivateKey = keyLib.PrivateKey;
 var Script = btcLib.Script;
@@ -63,11 +62,6 @@ describe('client API', function() {
       blockchainExplorerMock.reset();
       sandbox = sinon.sandbox.create();
 
-      if (!process.env.WC_SHOW_LOGS) {
-        sandbox.stub(log, 'warn');
-        sandbox.stub(log, 'info');
-        sandbox.stub(log, 'error');
-      }
       done();
     });
   });
@@ -75,38 +69,6 @@ describe('client API', function() {
   afterEach(function(done) {
     sandbox.restore();
     done();
-  });
-
-  describe('constructor', function() {
-    it('should set the log level based on the logLevel option', function() {
-      var originalLogLevel = log.level;
-
-      var client = new WalletClient.API({
-        logLevel: 'info'
-      });
-      client.logLevel.should.equal('info');
-      log.level.should.equal('info');
-
-      var client = new WalletClient.API({
-        logLevel: 'debug'
-      });
-      client.logLevel.should.equal('debug');
-      log.level.should.equal('debug');
-
-      log.level = originalLogLevel; //restore since log is a singleton
-    });
-
-    it('should use silent for the log level if no logLevel is specified', function() {
-      var originalLogLevel = log.level;
-
-      log.level = 'foo;'
-
-      var client = new WalletClient.API();
-      client.logLevel.should.equal('silent');
-      log.level.should.equal('silent');
-
-      log.level = originalLogLevel; //restore since log is a singleton
-    });
   });
 
   describe('Client Internals', function() {
