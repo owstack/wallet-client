@@ -18,8 +18,8 @@ var context = new Context({
 });
 
 class CPayPro extends BasePayPro {
-	constructor() {
-	  super(context);
+	constructor(opts) {
+	  super(context, opts);
 	}
 };
 

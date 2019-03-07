@@ -9,7 +9,6 @@ var BaseAPI = BaseWalletClient.API;
 
 var Address = cLib.Address;
 var Defaults = cLib.Defaults;
-var log = require('./log');
 var Networks = cLib.Networks;
 var PayPro = require('./paypro');
 var Transaction = cLib.Transaction;
@@ -21,7 +20,6 @@ var Verifier = require('./verifier');
 var context = new Context({
 	Address: Address,
 	Defaults: Defaults,
-	log: log,
 	Networks: Networks,
 	PayPro: PayPro,
 	Transaction: Transaction,

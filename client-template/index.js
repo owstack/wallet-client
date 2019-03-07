@@ -6,7 +6,6 @@ var Lib = require('./cLib');
 
 Client.API = require('./api');
 Client.Defaults = require('./common/defaults');
-Client.log = require('./log');
 Client.Networks = Lib.Networks;
 Client.PayPro = require('./paypro');
 Client.Unit = Lib.Unit;
