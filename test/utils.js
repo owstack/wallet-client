@@ -70,7 +70,7 @@ describe('Utils', function() {
         args: [1, 'BTC', {
           includeUnits: false
         }],
-        expected: '0.00'
+        expected: '0'
       }, {
         args: [400050000, 'BTC', {
           includeUnits: false
@@ -80,7 +80,7 @@ describe('Utils', function() {
         args: [400000000, 'BTC', {
           includeUnits: false
         }],
-        expected: '4.00'
+        expected: '4'
       }, {
         args: [49999, 'BTC', {
           includeUnits: false
@@ -90,7 +90,7 @@ describe('Utils', function() {
         args: [100000000, 'BTC', {
           includeUnits: false
         }],
-        expected: '1.00'
+        expected: '1'
       }, {
         args: [0, 'bit', {
           includeUnits: false
@@ -182,7 +182,7 @@ describe('Utils', function() {
         args: [0, 'bit', {
           includeUnits: false
         }],
-        expected: '0.00'
+        expected: '0'
       }, {
         args: [12345678, 'bit', {
           includeUnits: false

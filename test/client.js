@@ -4761,7 +4761,7 @@ describe('client API', function() {
             includeUnits: false
           }
         },
-        expected: '0.00'
+        expected: '0'
       }, {
         args: {
           amount: 0,
